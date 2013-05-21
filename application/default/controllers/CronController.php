@@ -223,15 +223,15 @@ class CronController extends Zend_Controller_Action
 		$mail->Username   = $emailaddress['email'];    // GMAIL username
 		$mail->Password   = $emailaddress['password']; // GMAIL password
 		
-		$mail->SetFrom($emailaddress['email'], 'Productivo Webapp');
+		$mail->SetFrom($emailaddress['email'], 'Productivito Webapp');
 		
-		$mail->AddReplyTo($emailaddress['email'],"Productivo Webapp");
-		//$mail->AddReplyTo("alex.mihai07@yahoo.com","Productivo Webapp");
+		$mail->AddReplyTo($emailaddress['email'],"Productivito Webapp");
+		//$mail->AddReplyTo("spam@productivito.org","Productivito Webapp");
 		
 		if(!empty($attachments))		
-			$mail->Subject    = "Productivo Webapp - Rapoarte pe Mail";
+			$mail->Subject    = "Productivito Webapp - Rapoarte pe Mail";
 		else
-			$mail->Subject    = "Productivo Webapp - Alerte Mail";
+			$mail->Subject    = "Productivito Webapp - Alerte Mail";
 		$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!"; // optional, comment out and test
 		
 		$mail->MsgHTML($body);

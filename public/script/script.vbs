@@ -8,7 +8,7 @@ Sub LogEntry()
         Dim URL
  
         Set objRequest = CreateObject("Microsoft.XMLHTTP")
-        URL = "http://productivo.corporate/cron"
+        URL = "http://productivito.corporate/cron"
  
         objRequest.open "POST", URL , false
  
