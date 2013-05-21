@@ -35,9 +35,9 @@ class Application_Table_dbDescribeAccess extends Zend_Db_Table_Abstract {
 		 /* $sql = "SELECT  * FROM access_describe WHERE name_access_level = '".$column."' AND ".
 		  											   "type = '".$type."'";
 		
-		  $link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
+		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -82,7 +82,7 @@ class Application_Table_dbDescribeAccess extends Zend_Db_Table_Abstract {
 		
 		/*  $sql = "SELECT  * FROM access_describe WHERE type = '".$type."'";
 		
-		  $link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
+		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
 		  mssql_select_db('productivo', $link);
 		
