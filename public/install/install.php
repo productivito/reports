@@ -7,7 +7,7 @@
 		$password = $_POST['dbpassword'];
 		//echo $username."  ".$dbname."</br>";
 	
-		$contents = file_get_contents("http://localhost/productivo/public/install/application.ini.template", FILE_USE_INCLUDE_PATH);
+		$contents = file_get_contents("http://localhost/productivito/public/install/application.ini.template", FILE_USE_INCLUDE_PATH);
 		$contents = str_replace("_DBHOST_", $host, $contents);
 		$contents = str_replace("_DBNAME_", $dbname, $contents);
 		$contents = str_replace("_DBUSERNAME_", $username, $contents);
