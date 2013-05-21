@@ -1,0 +1,18 @@
+<?php $i=0;
+foreach($this->modulePopulairOffers as $arrOffer): 
+    if($i%2==0) { $class= 'whiteRow'; } else { $class= 'blueRow';}
+    ?>
+    <div class="siteOffersModule_populairOfferBox  <?php echo $class; ?>">
+        <span class="siteOffersModule_populairOfferTitle"><?php echo $arrOffer['product_name']; ?></span><br/>
+        
+        <div class="siteOffersModule_populairOfferImage" style="background-image:url('<?php echo $this->baseUrl('img/shop/thumbs/'.$arrOffer['product_logo_thumb']); ?>')"></div>
+        
+        <div class="siteOffersModule_populairOfferText">
+            <span class="siteOffersModule_populairOfferFromPrice"><?php echo $this->languageHelper('priced_from'); ?> &euro;<?php echo $arrOffer['ticket_price_old']; ?></span><br />
+            <span class="siteOffersModule_populairOfferForPrice"><?php echo $this->languageHelper('priced_to'); ?> <strong>&euro;<?php echo $arrOffer['ticket_price']; ?></strong></span>
+            <span class="siteOffersModule_populairOfferOrder"><strong>&ndash; <?php echo $this->languageHelper('order'); ?></strong></span>
+        </div>
+        
+    </div>
+<?php $i++;
+endforeach; ?>

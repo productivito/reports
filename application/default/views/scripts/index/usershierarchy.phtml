@@ -1,0 +1,140 @@
+<?php
+$usersToDepartments = $this->usersToDepartments;
+$departments = $this->departments;
+$status = array();
+$statusUser = array();
+$usersMonitorized = $this->usersMonitorized;
+$departmentsMonitorized = $this->deptBanned;
+
+//echo "<pre>";print_r($departmentsMonitorized);echo "</pre>";
+//echo "<pre>";print_r($status);echo "</pre>";die();
+//echo "<pre>";print_r($this->usersMonitorized);echo "</pre>";
+//echo "<pre>";print_r($this->departmentsMonitorized);echo "</pre>";//die();
+function hasChilds($parent,$departments)
+{
+	
+	foreach($departments as $department)
+	{
+		if($department['id'] == $parent)
+			return 1;
+	}
+	return 0;
+}
+
+function printUsersWithDept($department,$usersToDepartments,$usersMonitorized)
+{
+	global $statusUser;
+	$statusUser[$department] = "1";
+	//print_r($usersMonitorized);die();
+	foreach($usersToDepartments as $user)
+	{
+		//echo $department;echo "</br>";
+		//echo $user['id']." => ";print_r($usersMonitorized);echo "</br>";
+		//echo $user['id']." ";
+		if($user['department'] == $department){
+			if (in_array($user['id'], $usersMonitorized))
+			//if(!empty($usersMonitorized[$user['id']]))
+			{
+				$first_name = '';
+				$last_name = '';
+				if( !empty($user['last_name']) )
+				{
+					$last_name = $user['last_name'];
+				}
+				if( !empty($user['first_name']) )
+				{
+					$first_name = $user['first_name'];
+				}
+				
+				if( $first_name != '' || $last_name != '' )
+					echo "<li><span class'file'>".$user['name'].' ( '.$last_name.' '.$first_name.' )'."</span></li>";
+				else				
+					echo "<li><span class'file'>".$user['name']."</span></li>";
+			}
+		}
+	}
+}
+
+function printDepartment($parent,$departments,$usersToDepartments,$usersMonitorized,$departmentsMonitorized)
+{
+	global $status,$statusUser;
+	//echo "<pre>";print_r($departmentsMonitorized);echo "</pre>";die();
+	$gasit = 0;
+	foreach($departments as $department)
+	{
+		
+		//if(!empty($departmentsMonitorized[$parent])){
+		if($department['parent'] == $parent && empty($status[$department['id']]))
+		{
+			$gasit = 1;
+			if(empty($departmentsMonitorized[$department['parent']]))
+			{
+				if(empty($statusUser[$department['parent']]))
+					printUsersWithDept($department['parent'],$usersToDepartments,$usersMonitorized);
+			}
+			if(empty($departmentsMonitorized[$department['id']])){
+				if(hasChilds($department['id'],$departments))
+				{
+					echo "<li>";
+					echo "<span class='folder'>".$department['name']."</span><ul>";
+					//printUsersWithDept($department['id'],$usersToDepartments);
+					$status[$department['id']] = "1";
+					printDepartment($department['id'],$departments,$usersToDepartments,$usersMonitorized,$departmentsMonitorized);
+					echo "";
+				}
+				else
+				{
+					echo "<li><span class='folder'>".$department['name']."</span></li>";
+					//printUsersWithDept($department['id'],$usersToDepartments);
+					$status[$department['id']] = "1";
+					
+				}
+				echo "</li></ul>";
+			}			
+		}
+		
+	}
+
+	if($gasit == 0)
+	{
+		printUsersWithDept($parent, $usersToDepartments,$usersMonitorized,$departmentsMonitorized);
+	}	
+}
+
+ function startTree($parent,$departments,$usersToDepartments,$status,$usersMonitorized,$departmentsMonitorized)
+ {
+ 	global $status;
+ 	foreach($departments as $department)
+	{
+		if(empty($status[$department['id']]))
+		{
+			printDepartment($department['id'],$departments,$usersToDepartments,$usersMonitorized,$departmentsMonitorized);
+			//printUsersWithDept($department['id'],$usersToDepartments);
+			//$status[$department['id']] = $department['id'];
+		}
+	}
+ }
+ 
+ ?>
+<?php foreach ($this->departments as $department)
+			if( $department['parent'] == 0 )
+				$root = $department['name'];
+	//printDepartment("1",$departments,$usersToDepartments);die();
+	//startTree("0",$departments,$usersToDepartments,$status);die();
+ ?>
+ 
+<div id="contentLeft">
+
+<h2> Organigrama </h2>
+<hr/>
+<ul id="organigrama" class="filetree">
+		<li>
+			<span class="folder"><?php echo $root; ?></span>
+			<ul>
+				<?php startTree("0",$departments,$usersToDepartments,$status,$usersMonitorized,$departmentsMonitorized); ?>
+			</ul>
+		</li>
+	</ul>
+	
+			<!--[if !IE]>end section<![endif]-->	
+</div>

@@ -1,0 +1,13 @@
+ # Rewrite rules for Zend Framework
+Options +FollowSymLinks
+php_flag magic_quotes_gpc Off
+IndexOptions IgnoreClient
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} ^TRACE
+RewriteRule .* - [F]
+
+RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)	[NC]
+RewriteRule .* - [F]
+
+RewriteBase /
+RewriteRule ^(/)?$ %{REQUEST_URI}public	[L]

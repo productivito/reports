@@ -1,0 +1,8 @@
+<?php if (!empty($this->trace) && !empty($this->message)): ?>
+    <h1><?php echo $this->message; ?></h1>
+    <pre><?php echo $this->trace; ?></pre>
+<?php else: ?>
+    <h1>Pagina is niet gevonden.</h1>
+    <p>De pagina die u probeert te bezoeken bestaat niet.<br>
+<?php endif; ?>
+

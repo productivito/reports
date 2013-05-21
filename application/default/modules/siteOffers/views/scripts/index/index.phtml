@@ -1,0 +1,24 @@
+<?php $i=0;
+foreach($this->moduleTopOffers as $arrOffer): 
+    
+    if($i%2==0) {
+            $class= 'whiteRow';
+        } else {
+            $class= 'blueRow';
+        }
+        ?>
+    <div class="siteOffersModule_offerBox   <?php echo $class; ?>">
+        <div class="siteOffersModule_offerImage" style="background-image:url('<?php echo $this->baseUrl('img/shop/thumbs/'.$arrOffer['product_logo_thumb']); ?>')"></div>
+        <div class="siteOffersModule_offerText">
+            <span class="siteOffersModule_offerTitle"><?php echo $arrOffer['product_name']; ?></span><br/>
+            <span class="siteOffersModule_offerFromPrice"><?php echo $this->languageHelper('offersModule_priced_from'); ?> &euro;<?php echo $arrOffer['ticket_price_old']; ?></span><br />
+            <span class="siteOffersModule_offerForPrice"><?php echo $this->languageHelper('offersModule_priced_to'); ?> &euro; <strong><?php echo $arrOffer['ticket_price']; ?></strong></span>
+            
+        </div>
+        <div class="siteOffersModule_offerExtra">
+            <span class="siteOffersModule_offerDiscount"><span class="siteOffersModule_offerDiscountGrey"><?php echo $this->languageHelper('offersModule_discount'); ?>:</span> <span class="siteOffersModule_offerDiscountRed">&euro; <?php echo $arrOffer['ticket_discount']; ?></span></span><br />
+            <div rel="index/offer/id/<?php echo $arrOffer['product_ID']; ?>" class="siteOffersModule_offerButton divButton"><?php echo $this->languageHelper('offersModule_order'); ?></div>
+        </div>
+    </div>
+<?php $i++;
+endforeach; ?>

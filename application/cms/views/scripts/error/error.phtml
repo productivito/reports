@@ -1,0 +1,24 @@
+<div id="Center" style="text-align:left">
+    <h1><?php echo $this->message; ?></h1>
+    <hr>
+    <pre><?php echo $this->trace; ?></pre>
+<?php	$code	= Zend_Controller_Front::getInstance()->getResponse()->getHttpResponseCode();
+	switch($code) :
+		case 404 : ?>
+			<h1>Page not found</h1>
+			<p>
+				De pagina die u probeert te bezoeken bestaat niet (meer). <br>
+				Klik <a href="<?php echo $this->url(array(), 'default'); ?>">hier</a> om terug te gaan naar de home pagina.
+			</p>
+		<? break;
+		case 500 : ?>
+			<h1>Error on the server</h1>
+			<p>
+				Sorry, an error occurred on the server.<br>
+				The webmaster has been notified. Please try again later.<br>
+				Click <a href="<?php echo $this->baseUrl('index'); ?>">here</a> to return to the home page..
+			</p>
+		<?php break;
+	endswitch;
+?>
+</div>

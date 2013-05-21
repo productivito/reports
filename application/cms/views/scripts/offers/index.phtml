@@ -1,0 +1,46 @@
+<?php
+echo $this->content ;
+?>
+<br class="close"/>
+
+<p><a href="<?php echo $this->baseUrl($this->name.'/new');?>" class="Button"><span class="Icon">+</span> New Offers</a></p>
+<br class="close"/>
+
+<table summary="Latest entries" cellpadding="0" cellspacing="0" class="OrderData" >
+	<thead>
+		<tr>
+			<th>Image</th>
+			<th colspan="2" ><?php echo $this->name?></th>
+			<th class="Icon" >&nbsp;</th>
+			<th class="Icon" >&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody id="test">
+	<?php
+		$nCount = 1;
+	
+		foreach ($this->rows as $row){
+
+			echo '<tr class="tr_container" id="tr_'.$row['id'].'">'; 
+	
+			echo '
+			<td><img alt="'.$row['title'].'" src="'.$this->baseUrl('/image/index/folder/offers/img/'.$row['img']).'"/></td>
+			<td class="Blue" id="td_'.$row['id'].'" colspan="2" >'.$row['title'].'</td>
+
+			<td>
+				<a href="'.$this->baseUrl($this->name.'/edit/id/'.$row['id']).'" title="edit">
+					<img src="'.$this->baseUrl('img/ico/16/pencil_16_hot.png').'" alt="edit" width="16"/>
+				</a>
+			</td>
+			<td>                           
+				<a href="'.$this->baseUrl($this->name.'/delete/id/'.$row['id']).'" class="delete" title="delete">
+					<img src="'.$this->baseUrl('img/ico/16/trash_16_hot.png').'"  alt="delete" width="16"/>
+				</a>
+			</td>
+		</tr>';
+
+		 $nCount++;
+		}
+	?>
+	</tbody>
+</table>

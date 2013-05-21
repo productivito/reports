@@ -1,0 +1,557 @@
+<form style="display:none;" id="exportDocumentForum" action="#" method="POST" target="_blank">
+    <input type="hidden" name="filters" id="exportDocumentFilters" value="" />
+    <input type="hidden" name="dataset" id="exportDocumentAction" value="" />
+    <input type="hidden" name="doctype" id="exportDocumentType" value="" />
+    <input type="hidden" name="component" id="exportDocumentComponent" value="" />
+</form>
+<script>
+    var exportReport = function(action, filters, type, component) {
+        if (typeof(action) === 'undefined') {
+            alert("Actiune nedefinita in functia de export");
+            return;
+        }
+        if (typeof(filters) === 'undefined') {
+            alert("Filtre nedefinite in functia de export");
+            return;
+        }
+        if (typeof(type) === 'undefined') {
+            alert("Format de document necunoscut in functia de export");
+            return;
+        }
+        switch(type) {
+            case 'pdf':
+            case 'csv':
+                $('#exportDocumentAction').val(action);
+                $('#exportDocumentFilters').val(JSON.stringify(filters));
+                $('#exportDocumentType').val(type);
+                $('#exportDocumentComponent').val(component);
+                $('#exportDocumentForum').attr('action', '<?=$this->baseUrl('export/') ?>' + type);
+                $('#exportDocumentForum').submit();
+                break;
+            default:
+                alert("Format de document necunoscut in functia de export");
+                return;
+                break;
+        }
+    };
+</script>
+<div id="reportTime">
+    <h2>Timpul</h2><hr/>
+    <table style="margin:0px auto;padding:0px;" cellpadding="0" cellspacing="10">
+        <tr style="vertical-align:top;">
+            <td style="">
+                <h4>Filtre calendaristice</h4>
+                <div id="tabs" class="tabs-left" style="height:200px;width:375px;">
+                    <input type="hidden" id="reportSelectedOption" value="caltabselector_azi" />
+                    <ul>
+                        <li><a class="caltabselector" id="caltabselector_azi" href="#calendarselector1">Azi</a></li>
+                        <li><a class="caltabselector" id="caltabselector_data" href="#calendarselector2">Data</a></li>
+                        <li><a class="caltabselector" id="caltabselector_interval" href="#calendarselector3">Interval date</a></li>
+                    </ul>
+                    <div id="calendarselector1" style="height:180px;width:350px;">
+                        Raport pentru ziua in curs
+                    </div>
+                    <div id="calendarselector2" style="height:180px;width:350px;">
+                        Data raportului<br/>
+                        <input type="text" name="cs2ds" id="cs2ds" class="datepicker" />
+                    </div>
+                    <div id="calendarselector3" style="height:180px;width:350px;">
+                        <table cellpadding="0" cellspacing="0" style="margin:0px;padding:0px;">
+                            <tr style="vertical-align:top;">
+                                <td style="padding-right:5px;">
+                                    Data de inceput<br/>
+                                    <input type="text" name="cs3dsstart" id="cs3dsstart" class="datepicker" />
+                                </td>
+                                <td style="padding-left:5px;">
+                                    Data finala<br/>
+                                    <input type="text" name="cs3dsend" id="cs3dsend" class="datepicker" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="radio" class="wsradiochecker" id="weekselectorA" name="weekselector" value="workweek" checked="checked" />
+                                    <label for="weekselectorA">Saptamana de lucru (L-V)</label><br/>
+                                    <input type="radio" class="wsradiochecker" id="weekselectorB" name="weekselector" value="allweek" />
+                                    <label for="weekselectorB">Intreaga saptamana (L-D)</label><br/>
+                                    <input type="radio" class="wsradiochecker" id="weekselectorC" name="weekselector" value="endweek" />
+                                    <label for="weekselectorC">Week-end (S-D)</label><br/>
+                                    <input type="radio" class="wsradiochecker" id="weekselectorD" name="weekselector" value="specweek" />
+                                    <label for="weekselectorD">Zile specifice:</label><br/>
+                                    <div style="margin-left:24px;" id="specweekdays">
+                                        <input type="checkbox" id="cs3specdays_L" name="cs3specdays[]" value="l" class="dselckb" />
+                                        <label for="cs3specdays_L">L</label>
+                                        <input type="checkbox" id="cs3specdays_Ma" name="cs3specdays[]" value="ma" class="dselckb" />
+                                        <label for="cs3specdays_Ma">Ma</label>
+                                        <input type="checkbox" id="cs3specdays_Mi" name="cs3specdays[]" value="mi" class="dselckb" />
+                                        <label for="cs3specdays_Mi">Mi</label>
+                                        <input type="checkbox" id="cs3specdays_J" name="cs3specdays[]" value="j" class="dselckb" />
+                                        <label for="cs3specdays_J">J</label>
+                                        <input type="checkbox" id="cs3specdays_V" name="cs3specdays[]" value="v" class="dselckb" />
+                                        <label for="cs3specdays_V">V</label>
+                                        <input type="checkbox" id="cs3specdays_S" name="cs3specdays[]" value="s" class="dselckb" />
+                                        <label for="cs3specdays_S">S</label>
+                                        <input type="checkbox" id="cs3specdays_D" name="cs3specdays[]" value="d" class="dselckb" />
+                                        <label for="cs3specdays_D">D</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>                
+            </td>
+        </tr>
+        <tr>
+            <td style="border-top:1px solid #CECECE;padding-top:10px;text-align:center;">
+                <input type="button" id="ajaxTimedFilterAction" value="Genereaza" />
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    $(function() {
+        $('.datepicker').datepicker({
+        	minDate:new Date(2012,04,01),
+        	maxDate:new Date()        
+       });
+        $('#tabs').tabs();
+        
+        // Tabs selector
+        $('.caltabselector').click(function() {
+            $('#reportSelectedOption').val($(this).attr('id'));
+        });
+        
+        // DaysOfTheWeek selector
+        $('.dselckb').attr('disabled', $('#weekselectorD').is(':checked') ? false : true);
+        $('.wsradiochecker').change(function() {
+            $('.dselckb').attr('disabled', $('#weekselectorD').is(':checked') ? false : true);
+        });
+    });
+    
+    // Validate selections and return the filters
+    var getTimesSelectedFilters = function() {
+        var filters = null;
+        switch ($('#reportSelectedOption').val()) {
+            case 'caltabselector_azi':
+                filters = {
+                    'dateIs' : "<?php echo date('m/d/Y'); ?>"
+                };
+                break;
+            case 'caltabselector_data':
+                if ($('#cs2ds').val() == '') {
+                    alert('Selectati data raportului.');
+                    return false;
+                }
+                filters = {
+                    'dateIs' : $('#cs2ds').val()
+                };
+                break;
+            case 'caltabselector_interval':
+                if ($('#cs3dsstart').val() == '') {
+                    alert('Selectati o data de inceput.');
+                    return false;
+                }
+                if ($('#cs3dsend').val() == '') {
+                    alert('Selectati o data finala.');
+                    return false;
+                }
+                filters = {
+                    'dateStart' : $('#cs3dsstart').val(),
+                    'dateEnd' : $('#cs3dsend').val(),
+                    'interval' : $('input[name=weekselector]:checked').val(),
+                    'days' : []
+                };
+                if ($('input[name=weekselector]:checked').val() == 'specweek') {
+                    if ($('input[name="cs3specdays[]"]:checked').length == 0) {
+                        alert('Selectati zelele dorite.');
+                        return false;
+                    }
+                    $('input[name="cs3specdays[]"]:checked').each(function() {
+                        filters.days.push($(this).val());
+                    });
+                }
+                break;
+            default:
+                alert("Actiunea nu poate fi efectuata.\nSelector de data invalid.");
+                break;
+        }
+        filters.users = parseUserSelectors();
+
+        return filters;
+    };
+</script>
+
+
+<div id="report">
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <h2>
+        Raport ROI
+        <a href="#" style="float:right">Descrie raport</a>
+    </h2><hr/>
+    <div id="tableChartDraw" style="width:100%;margin:10px auto;margin-bottom:20px">
+        <div id="responseDataTableChart" style="height:400px;width:100%;"></div>
+    </div>
+    <div id="tableTabs" class="tabs" style="margin-bottom:10px;padding-bottom:10px;">
+        <input type="hidden" id="resultFilters" />
+        <input type="hidden" id="resultContainer" />
+        <div id="container">
+        	<div id="tableContainer"></div>
+      		<span id="menuButtons" style="float:right;margin-top:-33px;"><button id="ajaxCallPaginationPrevious">Previous</button>
+      		<button id="ajaxCallPaginationNext">Next</button></span>
+      	</div>
+    </div>
+    <div class="export" id="exportDocuments">
+        <hr/>
+        <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+    </div>
+</div>
+<script type="text/javascript">
+    // Link the local processing action to the filtering pane
+    $(document).ready(function() {
+        
+        var topResponseData = null;
+        
+        $('#tableTabs').hide();
+        $('#tableChartDraw').hide();
+        $('#tableTabs').tabs();
+        
+        $('#ajaxTimedFilterAction').click(function() {
+            var myFilters = getTimesSelectedFilters();
+            if (myFilters !== false) {
+                var call = $.ajax({
+                    type: 'POST',
+                    url: '<?php echo $this->baseUrl('ajax/roi'); ?>',
+                    data: {
+                        filters : myFilters,
+                        users : parseUserSelectors(),
+                        page : 1
+                    },
+                    beforeSend: function() {
+                        $('#tableContainer').empty();
+                        $('#tableTabs').hide();
+                        $('#loader').show();
+                    },
+                    statusCode: {
+                        404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                        500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                    }
+                }).done(function() {
+                    
+                    var data = eval('(' + call.responseText + ')');
+                    //console.log(data);
+                    $('#tableContainer').html(processDocumentsTable(data,1,100));
+                    $('.breakListCnt').hide();
+                    $('.breakListLink').click(function() {
+                        var localId = $(this).attr('id') + 'div';
+                        $('#' + localId).toggle();
+                    });
+                    $('#responseDataTable').dataTable();
+                    
+			 		$("select").change(function () {
+			          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+			        });    
+			                         
+                    // Keep data and filters
+                    $('#resultFilters').val(data.filters);
+                    topResponseData = data;
+                    processDocumentsChart(data);
+                    $('#tableChartDraw').show();
+                    
+                }).fail(function() {
+                    $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+                }).always(function() {
+                    $('#loader').hide();
+                    $('#tableTabs').show();
+                });
+            }
+        });
+        
+ 	    $('#ajaxCallPaginationNext').click(ajaxCallPaginationNext);
+        $('#ajaxCallPaginationPrevious').click(ajaxCallPaginationPrevious);           
+        
+    });
+    
+    
+	var ajaxCallPaginationNext = function() {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {  
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/roi'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage: $("#numberElements :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButtons").addClass('hidden');
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $("#menuButtons").removeClass('hidden');
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 		
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPage = function(numberPerPage) {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {        
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/roi'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                	
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButtons").addClass('hidden');
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $("#menuButtons").removeClass('hidden');
+                	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPrevious = function() {
+		var page = $("#currentPage").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPrevious").attr('disabled','disabled');
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {      
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/roi'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage: $("#numberElements :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButtons").addClass('hidden');
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $("#menuButtons").removeClass('hidden');
+                	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };    
+
+    var processDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var dt = data.data.usage;
+		var select = '<select id="numberElements">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";	
+        var output = select + '<table id="topTable">';
+        // header
+        output += '<thead><tr>';
+        output += '<th>Departament</th>';
+        output += '<th>WinUser</th>';
+        output += '<th>Nume</th>';
+        output += '<th>Cost/Ora</th>';
+        output += '<th>Valuta</th>';
+        output += '<th>Ore cf. CM</th>';
+        output += '<th>Ore productive</th>';
+        output += '<th>Cost ore lucrate</th>';
+        output += '<th>Valoare ore productive</th>';
+        output += '</tr></thead><tbody>';
+        // data
+        if(dt != undefined){
+	        for (i in dt) {
+	            output += '<tr>';
+	            output += '<td>' + dt[i].dept + '</td>';
+	            output += '<td>' + dt[i].user + '</td>';
+	            output += '<td>' + dt[i].name + '</td>';
+	            output += '<td>' + dt[i].hourCost + '</td>';
+	            output += '<td>' + dt[i].curency + '</td>';
+	            output += '<td>' + dt[i].hoursCfCM + '</td>';
+	            output += '<td>' + dt[i].prodHours + '</td>';
+	            output += '<td>' + dt[i].workCost + '</td>';
+	            output += '<td>' + dt[i].prodValue + '</td>';
+	            output += '</tr>';
+	        }
+        }
+        else
+        {
+        	output += '<tr>';
+        	output += '<td></td>';
+            output += '<td></td>';
+            output += '<td></td>';
+            output += '<td></td>';
+            output += '<td>' + 'No data found' + '</td>';
+            output += '<td></td>';
+            output += '<td></td>';
+            output += '<td></td>';
+            output += '<td></td>';   	
+        	output += '</tr>';
+        }	
+        output += '</tbody></table></br>Pagina <div id="currentPage">'+ page + '</div>';
+        return output;
+    };
+
+    var processDocumentsChart = function(data) {
+        $('#responseDataTableChart').empty();
+        $('#tableChartDraw').hide();
+        var dt = data.data.graph;
+        if(dt != undefined){
+	        var chartData = [
+	            { 'label' : 'Ore productive', 'totalore' : dt.totalProd },
+	            { 'label' : 'Ore cf. CM', 'totalore' : dt.totalCfCM }
+	        ];
+        }
+        else
+        {
+	        var chartData = [
+	            { 'label' : 'Ore productive', 'totalore' : 0 },
+	            { 'label' : 'Ore cf. CM', 'totalore' : 0 }
+	        ];        
+        }
+
+        // SERIAL CHART
+        var chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData;
+        chart.categoryField = "label";
+        chart.startDuration = 1;
+        chart.rotate = true;
+
+        // AXES
+        // category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.labelRotation = 90;
+        categoryAxis.gridPosition = "start";
+
+        // GRAPH
+        var graph = new AmCharts.AmGraph();
+        graph.valueField = "totalore";
+        graph.balloonText = "[[category]]: [[value]]";
+        graph.type = "column";
+        graph.lineAlpha = 0;
+        graph.fillColors = "#ADD981";
+        graph.fillAlphas = 1;
+        chart.addGraph(graph);
+
+        $('#tableChartDraw').show();
+        $('#responseDataTableChart').height(150);
+        chart.write("responseDataTableChart");
+    };
+    
+    var exportCurrent = function(type) {
+        var myFilters = getTimesSelectedFilters();
+        myFilters['users'] = parseUserSelectors();
+        var component = 'usage'
+        var action = 'roi';
+        exportReport(action, myFilters, type, component);
+    };
+
+</script>

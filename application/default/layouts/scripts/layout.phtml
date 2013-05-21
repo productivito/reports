@@ -1,0 +1,347 @@
+<!--
+  developed by RoyalBit
+-->
+
+<?php echo $this->doctype(); ?>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Productivo Admin Panel</title>
+		<link rel="shortcut icon" href="<?php echo $this->baseUrl('img/productivo_icon_tiny.jpg')?>">
+        <!-- START Load CSS/JScript -->
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/admin.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/reset.css')); ?>
+		<?php $this->headLink()->prependStylesheet($this->baseUrl('css/tipTip.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/jquery.treeview.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/components.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/datatables/jquery.dataTables.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/components.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/smoothness/jquery-ui-1.8.18.custom.css')); ?>
+        <?php echo $this->cssHelper() ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/lib/jquery.cookie.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.tipTip.minified.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.treeview.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/raphael.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/elycharts.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/divButton.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/siteOffers.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/contactForm.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/googleMap.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/cufonNow.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('fonts/Helvetica_400-Helvetica_400.font.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/cufon.js')); ?>        
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery-ui-1.8.14.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery-1.6.2.js')); ?>      
+        <?php $this->javascriptHelper() ?>
+        <?php echo $this->headScript() ?>
+        <!--[if gte IE 9]>
+        <script type="text/javascript">
+        Cufon.set('engine', 'canvas');
+        </script>
+        <![endif]-->
+        <!-- END Load CSS/JScript -->
+        <script type="text/javascript">
+		    $(document).ready(function(){
+				$("#columnLeftRoles").treeview({
+					animated:"normal",
+					persist: "cookie"
+				});
+			
+			$("#columnRightRoles").treeview({
+				animated:"normal",
+				persist: "cookie"
+			});
+			
+			$("#organigrama").treeview({
+				animated:"normal",
+				persist: "cookie"
+			});
+			for(var i=1; i<=8; i++)
+				$("#sm" + i).tipTip({delay:0});
+			if ( $.browser.msie ){
+				$("#logo").css('padding-top','0px');
+				$("#logo").css('margin-top','31px');
+				$("#main_menu").css('padding-left','15px');
+				$("#user_access").css('padding-right','15px');
+				$("#user_access").css('margin-top','8px');
+				$(".help_links").css('width','230px');
+				$("#content_wrapper").css('height','400px');
+			}
+		});
+				
+			
+		function checkAll() {
+			
+			$('input[type=checkbox]').attr('checked', "checked");
+		}
+		
+		function uncheckAll() {
+
+			$('input[type=checkbox]').attr('checked', false);
+			
+		}
+		
+		function deleteSelectedUsers() {
+		
+			var users = new Array();
+			var count = 0;
+			$.each($('input:checked'), function(k, v) {
+					users.push(v.id);
+					count = count+1;
+			});
+			if(count == 0 )
+			{
+				alert("Nu ati selectat nici un user");
+			}
+			else{
+				
+				$.ajax({
+	                type : "POST",
+	                url : "<?php echo $this->baseUrl('index/deleteselectedusers'); ?>",
+	                data: {users: users},
+	                dataType : "json",
+	                success : function(data) {
+	                	console.log(data);                
+                		alert("");	                
+	                    window.location.reload();
+	                }
+	     	   });		
+     	   }	
+		}
+		
+		function deleteSelectedUser(link){
+			var user;
+			user = link.id;
+			
+			 $.ajax({
+                type : "POST",
+                url : "<?php echo $this->baseUrl('index/deleteselecteduser'); ?>",
+                data: {user: user},
+                dataType : "json",
+                success : function(data) {					
+                    window.location.reload();
+                }
+     	   });
+     	   
+			
+		}
+		function deleteSelectedRole(link){
+			var role;
+			role = link.id;
+			if(confirm("Stergeti rolul selectat ?"))
+			{
+				 $.ajax({
+	                type : "POST",
+	                url : "<?php echo $this->baseUrl('index/deleteselectedrole'); ?>",
+	                data: {role: role},
+	                dataType : "json",
+	                success : function(data) {
+	                    window.location.reload()
+	                }
+	     	   });
+			}	
+		}
+				
+		function deleteSelectedRoles(){
+			var roles = new Array();
+			var count = 0;
+			$.each($('input:checked'), function(k, v) {
+					roles.push(v.id);
+					count = count+1;
+			});
+			if(count == 0 )
+			{
+				alert("Nu ati selectat nici un rol");
+			}
+			else{
+			if(confirm("Stergeti rolurile selectate ?"))
+			{				
+				$.ajax({
+	                type : "POST",
+	                url : "<?php echo $this->baseUrl('index/deleteselectedroles'); ?>",
+	                data: {roles: roles},
+	                dataType : "json",
+	                success : function(data) {
+	                    window.location.reload()
+	                }
+	     	   });	
+	     	 }	
+     	   }			
+		}
+		
+		function deleteSelectedClient(link)
+		{
+			var computer;
+			computer = link.id;
+			var name ;
+			$.ajax({
+	            type : "POST",
+	            url : "<?php echo $this->baseUrl('index/getcomputername'); ?>",
+	            data: {computer: computer},
+	            dataType : "json",
+	            success : function(data) {
+	                name = data;
+	                
+					if(confirm("Stergerea din aceasta lista a calculatorului " + name + " va provoca stergerea tuturor userilor si istoricul actiunilor acestora, de pe calculatorul respectiv. Doriti sa continuati?"))
+					{			
+						 $.ajax({
+			                type : "POST",
+			                url : "<?php echo $this->baseUrl('index/deleteselectedclient'); ?>",
+			                data: {computer: computer},
+			                dataType : "json",
+			                success : function(data) {
+			                    window.location.reload()
+			                }
+			     	   });
+		     	   }	                
+	            }
+	         });
+
+					
+		}		
+		
+        </script>
+
+
+    </head>
+    <body rel="<?php echo $this->baseUrl('public/../'); ?>">
+        <!--[if !IE]>start wrapper<![endif]-->
+	<div id="wrapper">
+		<!--[if !IE]>start head<![endif]-->
+		<div id="head">
+			<div id="banda_head">
+					<div id="logo"></div>
+				<!--[if !IE]>start menus_wrapper<![endif]-->
+				<div id="menus_wrapper">
+					<ul id="main_menu" >
+						<li><a href="<?php echo $this->baseUrl('/index/rapoarte'); ?>" onmouseover="changeSrc('<?php echo $this->baseUrl('img/rapoarte_over.png'); ?>', 'rapoarte')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/rapoarte.png'); ?>', 'rapoarte')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/rapoarte_down.png'); ?>', 'rapoarte')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/rapoarte.png'); ?>', 'rapoarte')" ><img id="rapoarte" src="<?php echo $this->baseUrl('img/rapoarte.png'); ?>" /></a></li>
+						<li><a href="<?php echo $this->baseUrl('/index/home'); ?>"  ><img id="administrare" src="<?php echo $this->baseUrl('img/administrare_active.png'); ?>" /></a></li>
+						<li><a href="#" onmouseover="changeSrc('<?php echo $this->baseUrl('img/ajutor_over.png'); ?>', 'ajutor')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/ajutor.png'); ?>', 'ajutor')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/ajutor_down.png'); ?>', 'ajutor')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/ajutor.png'); ?>', 'ajutor')" ><img id="ajutor" src="<?php echo $this->baseUrl('img/ajutor.png'); ?>" /></a></li>
+					</ul>
+					<ul id="user_access">
+						<a href="<?php echo $this->baseUrl('index/changepassword') ?>"><li>Change Password |</li></a>
+						<a href="<?php echo $this->baseUrl('index/logout') ?>"><li class="last">Log out</li></a>
+					</ul>
+				</div>
+				
+				
+				<!--[if !IE]>end menus_wrapper<![endif]-->
+			</div>
+			
+			
+			
+			
+		</div>
+		<!--[if !IE]>end head<![endif]-->
+		
+		<!--[if !IE]>start content<![endif]-->
+        <!-- START Content -->
+		<div id="content">
+			<div id="banda_rosie">
+					<ul id="left">
+						
+						<?php foreach($this->menu as $item){ ?>
+							<li><a onmouseover="changeSrc('<?php echo $this->baseUrl('img/') . $item['class'] . '_over.png'; ?>','<?php echo $item['class']; ?>')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/') . $item['class'] . '.png'; ?>','<?php echo $item['class']; ?>')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/') . $item['class'] . '_active.png'; ?>','<?php echo $item['class']; ?>')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/') . $item['class'] . '.png'; ?>','<?php echo $item['class']; ?>')" href="<?php echo $this->baseUrl('index/'.$item['page']); ?>" ><img title="<?php echo $item['full_name']; ?>" id="<?php echo $item['class']; ?>" src="<?php echo $this->baseUrl('img/') . $item['class'] . '.png'; ?>" /></a></li>
+						<?php } ?>
+						
+					</ul>
+				</div>
+				
+		<div id="content_wrapper">
+            <div id="page">
+				<div class="inner">
+                <?php echo $this->layout()->content; ?>
+                </div>
+            </div>
+            <!--[if !IE]>end page<![endif]-->
+			<!--[if !IE]>start sidebar<![endif]-->
+			<div id="sidebar">
+				<div class="inner">	
+					<!--[if !IE]>start section<![endif]-->	
+					<div class="section_admin">
+						<!--[if !IE]>start title wrapper<![endif]-->
+						<div class="title_wrapper">
+							<h2>Roluri</h2>
+						</div>
+						<!--[if !IE]>end title wrapper<![endif]-->
+						<!--[if !IE]>start section content<![endif]-->
+						<div class="section_content">
+							<!--[if !IE]>start section content top<![endif]-->
+							<div class="sct">
+								<ul id="columnLeftRoles" class="filetree">
+										<li>
+											<span class="folder">Roluri</span>
+											<ul>
+												<?php foreach($this->rolesSidebar as $roles){ ?>
+												<li><span class="file"><?php echo $roles['access'] ?></span></li>
+												<?php } ?>
+											</ul>
+										</li>
+								</ul>
+											
+							</div>
+							<!--[if !IE]>end section content top<![endif]-->
+							
+						</div>
+						<!--[if !IE]>end section content<![endif]-->
+					</div>
+					<!--[if !IE]>end section<![endif]-->
+				
+				
+				</div>
+			</div>
+			<!--[if !IE]>end sidebar<![endif]-->
+			
+			
+			</div>
+			
+		</div>
+		<!--[if !IE]>end content<![endif]-->
+		
+	</div>
+	<!--[if !IE]>end wrapper<![endif]-->
+	
+	<!--[if !IE]>start footer<![endif]-->
+	<div id="footer">
+		<div id="footer_inner">
+		
+		<dl class="copy">
+			<dt><strong>Productivo Admin</strong></dt>
+			<dd>&copy; 2012 Productivo.ro  All rights reserved.</dd>
+		</dl>
+		
+		<dl class="quick_links">
+			<dt><strong>Quick Links :</strong></dt>
+			<dd>
+				<ul>
+					<li><a href="#">Administrare </a></li>
+					<li><a href="#">Rapoarte</a></li>
+					<li><a href="#">Ajutor</a></li>
+					<li class="last"><a href="#">Log out</a></li>
+				</ul>
+			</dd>
+		</dl>
+		
+		
+		<dl class="help_links">
+			<dt><strong>Ai nevoie de ajutor?</strong></dt>
+			<dd>
+				<ul>
+					<li><a href="#">FAQ</a></li>
+					<li class="last"><a href="#">Contact</a></li>
+				</ul>
+			</dd>
+		</dl>
+	
+		</div>
+	</div>
+	<!--[if !IE]>end footer<![endif]-->
+	<script type="text/javascript">
+	function changeSrc(path,id)
+	{
+		document.getElementById(id).src = path;
+	}
+	</script>
+</body>
+</html>
+

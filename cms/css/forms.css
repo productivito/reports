@@ -1,0 +1,187 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*
+ * Form
+ */
+ .FormRow{
+ 	float:left;
+	margin-bottom:13px;
+	clear:both;
+	}
+ .FormGroup{
+ 	float:left;
+	clear:both;
+	padding: 10px 0;
+	border-top:1px dashed #CCCCCC;
+	border-bottom:1px dashed #CCCCCC;
+	margin-bottom:13px;
+	}
+legend{
+	display:none;
+}
+ legend{
+	display:block;
+	padding:3px;
+	color:#1C94C4;
+	font-size:14px;
+}
+fieldset{
+	border: none 0;
+	margin: 0;
+	padding: 0;
+}
+fieldset{
+	border: 1px solid #CCCCCC;
+	margin: 10px 0;
+	padding: 5px;
+	width:410px;
+}
+fieldset dd{
+	position: relative;
+	padding-bottom: 5px;
+	width:410px;
+}
+
+/* * start float fixer * */
+fieldset .FormInputRow:after {
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
+}
+
+fieldset dd{
+	display: inline-table;
+}
+
+div.radio_form label {
+        margin-bottom: 20px; 
+}
+
+div.radio_form label input {
+    margin-right: 5px;
+    
+}
+
+
+
+
+/* Hides from IE-mac \*/
+* html fieldset .FormInputRow {height: 1%;}
+fieldset .FormInputRow {display: block;}
+/* End hide from IE-mac */
+
+/* * end float fixer */
+
+label{
+	width: 150px;
+	float: left;
+	padding: 4px 4px 0 0;
+	font-weight:bold;
+}
+label.required:after{
+	content: " *";
+
+}
+ label.Error{
+	width: 200px;
+	float: left;
+	padding: 4px 4px 0 0;
+	color:#FF0000;
+}
+
+label span.Mandatory{
+	padding-left: 4px;
+}
+
+input[type=text],
+input[type=password],
+ textarea,
+select{		
+        border-left: 1px solid #CCCCCC;
+        border-top: 1px solid #CCCCCC;
+        height: 21px;
+        margin-right: 3px;
+        width: 400px;
+        float: left;
+}
+#LogonWindow input[type=text],
+#LogonWindow input[type=password]{
+	width:300px;
+}
+ textarea{
+ height:400px;
+ }
+fieldset .FormInputRow select{
+	width: 260px;
+}
+	
+/* fix for ie 6 */	
+*html .FormInputRow input,
+*html .FormInputRow textarea,
+*html .FormInputRow select{
+	margin-left: -3px;
+}
+	
+/* velden met groot label */
+fieldset .DoubleRow label{
+	padding-top: 0px;
+	padding-bottom: 3px;
+}
+	
+/* small fields */
+fieldset .Small label{
+	width: 300px;
+}
+fieldset .Small input,
+fieldset .Small textarea,
+fieldset .Small select{
+	width: 75px;
+}
+fieldset .Small select{
+	width: 80px;
+}
+/* middle fields */
+fieldset .Middle label{
+	width: 200px;
+}
+fieldset .Middle input,
+fieldset .Middle textarea,
+fieldset .Middle select{
+	width: 175px;
+}
+fieldset .Middle select{
+	width: 180px;
+}	
+
+/* extra */
+fieldset .FormInputRow textarea{
+	overflow: auto;	
+	height: 100px;			
+}
+	fieldset .FormInputRow fieldset label{
+		width: auto;
+		float: none;
+		margin: 0;
+		padding: 0;
+	}
+	fieldset .FormInputRow fieldset input{
+		width: auto;
+		margin: 0 5px 0 0;
+		padding: 0; 
+		border: none 0;
+   }
+.short{
+	width:auto;
+	}
+input.short{
+	width:30px;;
+}
+        
+.Left   {
+	float:left;
+	margin-bottom:13px;
+        margin-left: 80px;
+}

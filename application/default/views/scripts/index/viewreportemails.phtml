@@ -1,0 +1,100 @@
+<?php
+	list($read,$add,$modify,$delete) = explode(",",$this->rights,10);
+	if($read != "r")
+		header('Location:'.$this->baseUrl('index/index'));
+?>
+
+<div id="contentLeft">
+ 	 <h2>Rapoarte pe Mail
+ 	 	<hr/>
+ 	 	
+<!--[if !IE]>start section<![endif]-->	
+<div class="section table_section">
+	<!--[if !IE]>start title wrapper<![endif]-->
+	<div class="title_wrapper">
+		<h2>Lista rapoarte pe mail</h2>
+
+	</div>
+	<!--[if !IE]>end title wrapper<![endif]-->
+	<!--[if !IE]>start section content<![endif]-->
+	<div class="section_content">
+		<!--[if !IE]>start section content top<![endif]-->
+		<div class="sct">
+			<form action="#">
+			<fieldset>
+			<!--[if !IE]>start table_wrapper<![endif]-->
+			<div class="table_wrapper">
+				<div class="table_wrapper_inner">
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tbody><tr>
+						<th width="3%">Numar.</th>
+						<th>Nume</th>
+						<th>Rapoarte</th>
+						<th>Departamente</th>
+						<th>Utilizatori</th>
+						<th>Destinatie</th>
+						<th style="width: 96px;">Actiuni</th>
+					</tr>
+					<?php 
+						$i = 1;
+						foreach($this->emails as $email)   
+						{		
+					?>
+					<tr class="first" style="font-weight:normal">
+						<td ><?php echo $i."."; ?></td>
+						<td><?php echo $email['name'];?></td>
+						<td><?php echo $email['reports'];?></td>
+						<td><?php echo $email['departments'];?></td>
+						<td><?php echo $email['users'];?></td>
+						<td><?php echo $email['destination'];?></td>
+
+						<td style="width: 96px;">
+							<div class="actions">
+								<ul>
+									<?php if($modify == "m"){ ?>
+									<!--  <li><a class="action2" id="<?php echo $email['id']; ?>"  href="<?php echo $this->baseUrl('index/editreportemail/id/'.$email['id']); ?>">2</a></li>  -->
+									<?php } ?>
+									<?php if($delete == "d"){ ?>
+									<li><a class="action4" id="<?php echo $email['id']; ?>" onclick="return deleteSelectedReportAlert(this)" href="javascript: void(0);">4</a></li>
+									<?php }?>
+									<li><input class="radio" id="<?php echo $email['id']; ?>" name="" type="checkbox" value="" /></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+					<?php $i++; }?>
+				</tbody></table>
+				</div>
+			</div>
+			<!--[if !IE]>end table_wrapper<![endif]-->
+			
+			<!--[if !IE]>start table menu<![endif]-->
+			<div class="table_menu">
+				<?php if($add == "a"){ ?>
+				<ul class="left">
+					<li><a href="<?php echo $this->baseUrl('index/reportemail') ?>" class="button add_new"><span><span>Adauga rap. pe mail</span></span></a></li>
+				</ul>
+				<?php } ?>								
+				<ul class="right">
+					<li><span onclick="checkAll();" class="button approve"><span><span>Selecteaza Tot</span></span></span></li>
+					<li><span onclick="uncheckAll();" class="button approve"><span><span>Deselecteaza Tot</span></span></span></a></li>
+					<?php if($delete == "d"){ ?>
+					<li><span onclick="deleteSelectedEmails()" class="button approve"><span><span>Sterge Selectate</span></span></span></li>
+					<?php } ?>
+				</ul>
+			</div>
+			<!--[if !IE]>end table menu<![endif]-->
+			
+			
+			</fieldset>
+			</form>
+							
+		</div>
+		<!--[if !IE]>end section content top<![endif]-->
+		
+	</div>
+	<!--[if !IE]>end section content<![endif]-->
+</div>
+<!--[if !IE]>end section<![endif]--> 	 	
+ 	 	
+ </div>

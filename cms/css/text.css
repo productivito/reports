@@ -1,0 +1,447 @@
+@charset "utf-8";
+/* CSS Document */
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:12px;
+    line-height:17px;
+    font-style:normal;
+}
+/* buttonbar */
+.OrderData tr td, th {
+    white-space: nowrap;
+}
+td.NoBorder{
+    white-space: normal;
+}
+table.ButtonBar{
+    width: 385px;
+    border: 0 none;
+    margin: 10px 0;
+    padding: 0;
+}
+
+table.ButtonBar td{
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+
+table.ButtonBar td.Left{
+    text-align: left;
+}
+
+table.ButtonBar td.Right{
+    text-align: right;
+    float:right;
+}
+
+/* uitzondering voor logon pagina */
+
+div#LogonWindow div.FormInputRow label{
+    width: 80px;
+}
+
+div#LogonWindow div.FormInputRow input{
+    width: 220px;
+    border-top: 1px solid #CCCCCC;;
+    border-left: 1px solid #CCCCCC;;
+    margin-right: 0;
+}
+
+div#LogonWindow table.ButtonBar{
+    width: 308px;
+}
+
+/*Table Entries*/
+table.OrderData{
+    margin-bottom:30px;
+    margin-top:30px;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+    width: 704px;
+    float: left;
+
+}
+
+.paginationControl {
+    float:left;   
+}
+
+
+
+table.transparent{
+    background-color: transparent;
+    border:none;
+}
+table.OrderData th,
+table.OrderData td{
+    padding: 2px 5px;
+    vertical-align: top;
+    text-align: left;
+    white-space:normal;
+
+}
+
+table.OrderData th{
+    border-bottom: 1px solid #292E6B;
+    text-transform:uppercase;
+    white-space:nowrap;
+}
+table.OrderData th.Icon{
+    width:40px;
+}
+
+table.OrderData td{
+    padding-bottom: 10px;
+    padding-top: 5px;
+}
+
+table.OrderData tr.White, table.OrderData tr.White td{
+    background-color: #fff;
+}
+
+table.OrderData tr.Blue, table.OrderData tr.Blue td{
+    background-color: #E9EAF0;
+    color: #292E6B;
+}
+
+table.OrderData tr.Highlight td{
+    background-color: #FDB845;
+}
+
+table.OrderData td.Entry{
+    width: 200px;
+}
+table.OrderData td.Status{
+    width: 60px;
+}
+
+table.OrderData td.Type{
+    width: 215px;
+}
+
+table.OrderData td.Date{
+    width: 70px;		
+}
+
+table.OrderData td.Buttons{
+    width: 113px;
+}
+
+table.SendData td.Buttons{
+    width: 25px;
+}
+table td.NoBorder{
+    border:none;
+}
+.Opacity{
+    /* for IE */
+    filter:alpha(opacity=40);
+    /* CSS3 standard */
+    opacity:0.4;
+}
+
+
+body {
+    font-family:Arial, Helvetica, sans-serif;
+    color:#292E6B;
+    font-size: 12px;
+    line-height: normal;
+}
+h1{
+    font-size:24px;
+    line-height:30px;
+    font-style:normal;
+
+}
+h2{
+    font-size:18px;
+    line-height:22px;
+    color:#e91d25;
+    font-style:normal;
+    font-weight:bold;
+}
+h3, h4, h4 a{
+    font-size:17px;
+    line-height:20px;
+    font-style:normal;
+    text-decoration:none;
+    color:#e91d25;
+}
+h4, h4 a{
+    color:#000;
+}
+#Left h4{
+    margin-bottom:12px;
+}
+.bold{
+    font-weight:bold;
+}
+.right{
+    text-align:right;
+}
+.errors{
+    color:#F00;
+    font-weight:bold;
+    list-style:none;
+}
+
+.radio_form ul.errors {
+    float:left;
+    margin-top:5px;
+}
+
+.name_big{
+    color:#000;
+    font-size:40px;
+}
+
+.name_normal{
+    color:#000;
+    font-size:12px;
+}
+
+.Info{
+    font-size:11px;
+    font-weight:bold;
+}
+.red{
+    color:#e91d25;
+}
+.black{
+    color:#000;
+}
+
+p.OK{
+    padding: 5px 0 0 20px;
+    color:#006600;
+    background:url(../img/ico/16/ok.png) no-repeat;
+}
+/*
+logon
+*/
+div#info, 
+div#Profile a,
+div#LogonWindow label,
+
+div#LogonWindow a{
+    color: white;
+    text-decoration: none;
+
+
+}
+/* Buttons */
+.Button{
+    color:#1C94C4 ;
+    text-decoration:none;
+    font-size:15px;
+}
+.Button .Icon{
+    font-size:20px;
+}
+a:link{
+    color:#1C94C4;
+}
+p.Buttons{
+    margin-left:20px;
+}
+.Line0 td{
+    text-decoration:line-through;
+}
+input.Button {
+    float:right;
+    margin-top:20px;
+}
+/*
+ *Main Menu
+*/
+/*Subjects*/
+ul.MainMenu{
+    list-style: none;
+}
+ul.MainMenu li{
+    padding-left:5px;
+}
+ul.MainMenu li.active,
+ul.MainMenu li:hover{
+    list-style:disc;
+}
+ul.MainMenu li.active a,
+ul.MainMenu li a:hover{
+    background:#292E6B;
+}
+ul.MainMenu li{
+    font-size:14px;
+    color:#292E6B;
+
+    margin-top:8px;
+}
+ul.MainMenu li li{
+    margin-top:0px;
+}
+ul.MainMenu  li a{
+    font-size:12px;
+    color:#fff;
+    font-weight:bold;
+    background:#292E6B;
+    width:130px;
+    display:block;
+    padding:3px 3px 3px 20px;;
+    text-decoration:none;
+}
+
+/* ENTERED BY MANUEL*/
+
+ul.tabs {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    height: 32px; /*--Set height of tabs--*/
+    border-bottom: 1px solid #999;
+    border-left: 1px solid #999;
+    width: 100%;
+}
+
+ul.tabs_edit {
+    margin-top:30px;
+
+}
+
+
+ul.tabs li {
+    float: left;
+    margin: 0;
+    padding: 0;
+    height: 31px; /*--Subtract 1px from the height of the unordered list--*/
+    line-height: 31px; /*--Vertically aligns the text within the tab--*/
+    border: 1px solid #999;
+    border-left: none;
+    margin-bottom: -1px; /*--Pull the list item down 1px--*/
+    overflow: hidden;
+    position: relative;
+    background: #f6f6f6;
+}
+ul.tabs li a {
+    text-decoration: none;
+    color: #000;
+    display: block;
+    font-size: 1.2em;
+    padding: 0 20px;
+    border: 1px solid #fff; /*--Gives the bevel look with a 1px white border inside the list item--*/
+    outline: none;
+}
+ul.tabs_edit li a {
+    color:#292E6B;
+}
+
+
+ul.tabs li a:hover {
+    background: #eaeaea;
+}
+html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that the active tab does not listen to the hover properties--*/
+    background: #fff;
+    border-bottom: 1px solid #fff; /*--Makes the active tab look like it's connected with its content--*/
+}
+
+
+.tab_container {
+    border: 1px solid #999;
+    border-top: none;
+    overflow: hidden;
+    clear: both;
+    float: left; width: 100%;
+    background: #fff;
+}
+
+.tab_container_edit {
+    border: 1px dotted #999;
+    border-right: none;
+    border-left: none;
+    overflow: hidden;
+    clear: both;
+    float: left; width: 100%;
+    background: #fff;
+
+}
+
+.tab_content {
+    padding: 20px;
+    font-size: 1.2em;
+}
+.tab_content label{
+    font-size: 12px;
+}
+
+.tab_content_edit {
+    padding-right:0px;
+    padding-left:5px;
+}
+
+.tab_content_edit input {
+    font-size: 0.9em;
+
+}
+
+.tab_content_edit #submit {
+    margin-top:30px;
+
+}
+
+
+.table_user {
+
+    color: #ff0000;
+
+}
+
+.title_interests{
+    font-weight: bold;
+    font-size: 1.4em;
+}
+
+#sortable1, #sortable2, #sortable3 { list-style-type: none; margin: 0; padding: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
+#sortable1 li, #sortable2 li, #sortable3 li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+
+
+tr.greenLog {
+    background-color: #e3fde3;
+}
+
+tr.redLog {
+    background-color: #ffeeee;
+}
+
+tr.greenLog td, tr.redLog td {
+margin-bottom: 2px solid white;
+    border-bottom: 2px solid white;
+
+    padding-bottom: 22px;
+}
+
+tr.greenLog a, tr.redLog a {
+    color: #292E6B;
+    text-decoration:none;
+}
+
+tr.greenLog a:hover, tr.redLog a:hover {
+    border-bottom: 1px dotted;
+}
+#logFilter {
+   float: right;
+    font-size: 15px;
+    margin-bottom: 40px;
+    margin-top: -20px;
+}
+
+#logFilter a {
+    margin-left: 20px;
+    padding: 5px 15px;
+    text-decoration: none;
+}
+
+
+
+#backLink {
+    margin-bottom:10px;
+}

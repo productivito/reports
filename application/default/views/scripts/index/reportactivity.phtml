@@ -1,0 +1,575 @@
+<div id="reportTimeSelector">
+    <?php echo $this->partial('index/userreportfilters.phtml', array()); ?>
+</div>
+<div id="report">
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <h2>
+        Raport de Activitate
+        <a href="#" style="float:right">Descrie raport</a>
+    </h2><hr/>
+    <!-- <div id="tableChartDrawStopped" style="width:100%;margin:10px auto;overflow: scroll;">
+        <div id="responseDataTableChartStopped" style="height:400px;width:100%;overflow:scroll"></div>
+    </div>     -->
+    <div id="tableChartDraw" style="width:100%;margin:10px auto;">
+    	<div id="responseDataTableChartBar" style="height:600px;width:100%;margin-bottom:50px"></div>
+        <div id="responseDataTableChart" style="height:400px;width:100%;margin-top:50px;"></div>
+    </div>
+    <div id="tableTabs" class="tabs" style="margin-bottom:10px;padding-bottom:10px;">
+        <input type="hidden" id="resultFilters" />
+        <input type="hidden" id="resultContainer" />
+        <div id="container">
+        	<div id="tableContainer"></div>
+      		<span id="menuButton" style="float:right;margin-top:-48px;margin-right:33px;"><button id="ajaxCallPaginationPrevious">Previous</button>
+      		<button id="ajaxCallPaginationNext">Next</button></span>
+      	</div>
+    </div>
+    <div class="export" id="exportDocuments">
+        <hr/>
+        <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+    </div>
+</div>
+<script type="text/javascript">
+    // Link the local processing action to the filtering pane
+    $(document).ready(function() {
+        
+        var topResponseData = null;
+        
+        $('#tableTabs').hide();
+        $('#tableChartDraw').hide();
+        $('#tableTabs').tabs();
+        $('#reGenerateChart').click(function() {
+            $('#tableChartDraw').hide();
+            //processDocumentsChart(topResponseData, $("#reGenerateChartRecNo").val());
+            //$('#tableChartDraw').show();
+        });
+        $('#ajaxTimedFilterAction').click(function() {
+            var myFilters = getTimesSelectedFilters();
+            if (myFilters !== false) {
+                var call = $.ajax({
+                    type: 'POST',
+                    url: '<?php echo $this->baseUrl('ajax/activity'); ?>',
+                    data: {
+                        filters : myFilters,
+                        users : parseUserSelectors(),
+                        page : 1
+                        
+                    },
+                    beforeSend: function() {
+                        $('#tableContainer').empty();
+                        $('#cronoContainer').empty();
+                        $('#tableChartDraw').hide();
+                        $('#tableTabs').hide();
+                        $('#loader').show();
+                    },
+                    statusCode: {
+                        404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                        500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                    }
+                }).done(function() {
+                    var data = eval('(' + call.responseText + ')');
+                    $('#tableContainer').html(processDocumentsTable(data,1,100));
+                    $('#tableContainer').css('overflow','scroll');
+                    
+				    $('.pauseListLink').click(function() {
+				    	
+				    	var localId = $(this).attr('id');
+				    	var localClass = $(this).attr('class');
+				    	
+						getPausedTime(localId,localClass);
+				    });
+				    
+                    
+			 		$("select").change(function () {
+			          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+			        });    
+			                         
+                    // Keep data and filters
+                    $('#resultFilters').val(data.filters);
+                    topResponseData = data;
+                    processDocumentsChart(data, 10);
+                    if((parseUserSelectors()).length == 1){
+                    	processDocumentChart2(data);
+                    }
+                    else{
+                    	$('#responseDataTableChartBar').empty();
+                    	$('#responseDataTableChartBar').hide();
+                    }                    
+                    
+                    $('#tableChartDraw').show();
+                    
+                }).fail(function() {
+                    $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+                }).always(function() {
+                    $('#loader').hide();
+                    $('#tableTabs').show();
+                });
+            }
+        });
+        
+  	    $('#ajaxCallPaginationNext').click(ajaxCallPaginationNext);
+        $('#ajaxCallPaginationPrevious').click(ajaxCallPaginationPrevious);             
+        
+    });
+    
+    
+	var ajaxCallPaginationNext = function() {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {      
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/activity'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    numberPerPage: $("#numberElements :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+				 $('#tableContainer').css('overflow','scroll');
+				 $("#menuButton").removeClass('hidden');
+			    $('.pauseListLink').click(function() {
+			    	
+			    	var localId = $(this).attr('id');
+			    	var localClass = $(this).attr('class');
+			    	
+					getPausedTime(localId,localClass);
+			    });
+			
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 		
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPage = function(numberPerPage) {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {      
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/activity'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                	
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                      
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+				 $('#tableContainer').css('overflow','scroll');
+				 $("#menuButton").removeClass('hidden'); 
+			    $('.pauseListLink').click(function() {
+			    	
+			    	var localId = $(this).attr('id');
+			    	var localClass = $(this).attr('class');
+			    	
+					getPausedTime(localId,localClass);
+			    });				
+					
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPrevious = function() {
+		var page = $("#currentPage").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPrevious").attr('disabled','disabled');
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {    
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/activity'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    numberPerPage: $("#numberElements :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                      
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+				$('#tableContainer').css('overflow','scroll');
+				$("#menuButton").removeClass('hidden');   
+			    $('.pauseListLink').click(function() {
+			    	
+			    	var localId = $(this).attr('id');
+			    	var localClass = $(this).attr('class');
+			    	
+					getPausedTime(localId,localClass);
+			    });			
+					
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+    
+    function getPausedTime(id,localClass)
+    {	
+		var splitResult = id.split(";");
+
+		if($("#stop" + splitResult[2]).html() != "Afisare"){
+			$("#stop" + splitResult[2]).html("Afisare");
+			return;
+		}		
+        var call = $.ajax({
+            type: 'POST',
+            url: '<?php echo $this->baseUrl('ajax/activitypause'); ?>',
+            data: {
+                user : splitResult[0],
+                day : splitResult[1]
+            },
+            beforeSend: function() {
+			    $("#stop" + splitResult[2]).html("<img height='30px' width='30px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'>");					
+            },
+            statusCode: {
+                404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+            }
+        }).done(function() {
+            var data = eval('(' + call.responseText + ')');
+            
+            if(data.data.length != 0){
+            	$("#stop" + splitResult[2]).html(data.data); 
+            } 	
+            else
+            {	
+            	$("#stop" + splitResult[2]).html('Fara pauza'); 
+            } 		
+
+            // Keep data and filters
+            //$('#resultFilters').val(data.filters);
+            //topResponseData = data;
+            
+        }).fail(function() {
+            $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+        }).always(function() {
+            $('#loader').hide();
+            $('#tableTabs').show();
+        });    
+    }     
+        
+
+    var processDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var dt = data.data.usage;
+		var select = '<select id="numberElements">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";	
+        var output = select + '<table id="topTable">';
+        // header
+        output += '<thead ><tr>';
+        output += '<th>Utilizator</th>';
+        output += '<th>Data</th>';
+        output += '<th>Prima deschidere PC</th>';
+        output += '<th>Ultima inchidere PC</th>';
+        output += '<th>Timp pornit</th>';
+        output += '<th>Timp activ</th>';
+        output += '<th>Timp Pauze</th>';
+        output += '<th>Procent TA/TT</th>';
+        output += '<th width="11%">Lista Pauze</th>';
+        output += '</tr></thead><tbody style="text-align:center">';
+        // data
+        for (i in dt) {
+            output += '<tr>';
+            output += '<td>' + dt[i].user + '</td>';
+            output += '<td>' + dt[i].day + '</td>';
+            output += '<td >' + dt[i].start + '</td>';
+            output += '<td  > ' + dt[i].end + '</td>';
+            output += '<td>' + dt[i].total + '</td>';
+            output += '<td>' + dt[i].active + '</td>';
+            output += '<td>' + dt[i].idle + '</td>';
+            output += '<td>' + dt[i].percent + '%</td>';
+            output += '<td><center><b><span class="pauseListLink" id="' + dt[i].user + ';' + dt[i].day + ';' + i  + '"><div style="font-weight:normal" id="stop'+ i +'">Afisare</div></span></b></center></td>'
+
+            output += '</div></td>';
+            output += '</tr>';
+        }
+        output += '</tbody></table></br>Pagina <div id="currentPage">'+ page + '</div>';
+        return output;
+    };
+
+    var processDocumentsChart = function(data, top) {
+        $('#responseDataTableChart').empty();
+        $('#responseDataTableChartBar').empty();
+        $('#tableChartDraw').hide();
+
+        
+        var chartData = [];
+        var dt = data.data.graph;
+        /*for (i in dt) {
+            if (top > 0 && counter < top) {
+                chartData.push({'Document' : dt[i].Document, 'Usage' : dt[i].Usage});
+            }
+            ++counter;
+        }
+        var chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData;
+        chart.titleField = "Document";
+        chart.valueField = "Usage";
+        chart.outlineColor = "#FFFFFF";
+        chart.outlineAlpha = 0.8;
+        chart.outlineThickness = 2;*/
+		for (i in dt) {
+                chartData.push({'date' : dt[i].date, 'activ' : dt[i].active, 'pauza': dt[i].idle});
+          
+        }       
+            
+            chart = new AmCharts.AmSerialChart();
+            chart.dataProvider = chartData;
+            chart.categoryField = "date";                  
+            chart.columnWidth = 0.9;
+            chart.marginTop = 15;
+            chart.marginLeft = 55;
+            chart.marginRight = 15;
+            chart.marginBottom = 80;
+
+            
+            // AXES
+            // category
+            var categoryAxis = chart.categoryAxis;
+            categoryAxis.gridAlpha = 0.1;
+            categoryAxis.axisAlpha = 0;
+            categoryAxis.gridPosition = "start";
+            categoryAxis.labelRotation = 45;
+            //categoryAxis.equalSpacing = true;
+
+            // value
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.stackType = "regular";
+            valueAxis.gridAlpha = 0.1;
+            valueAxis.axisAlpha = 0;
+            valueAxis.columnSpacing = 10;
+            chart.addValueAxis(valueAxis);
+
+            // GRAPHS
+            // first graph    
+            var graph = new AmCharts.AmGraph();
+            graph.title = "Timp Activ (ore)";
+            graph.balloonText = "[[category]]: [[value]] Ore";
+            graph.labelText = "";
+            graph.valueField = "activ";
+            graph.type = "column";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 1;
+            graph.lineColor = "#00ff01";
+            chart.addGraph(graph);
+
+            // second graph              
+            graph = new AmCharts.AmGraph();
+            graph.title = "Timp Pauza (ore)";
+            graph.balloonText = "[[category]]: [[value]] Ore";
+            graph.labelText = "";
+            graph.valueField = "pauza";
+            graph.type = "column";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 1;
+            graph.lineColor = "#ffff00";
+            chart.addGraph(graph);
+
+            // LEGEND                  
+            var legend = new AmCharts.AmLegend();
+            chart.addLegend(legend);                  
+       
+        $('#tableChartDraw').show();
+        //$("#responseDataTableChart").html("<h3 style=\"text-align:center;color:#3A3A3A\">Timpii de lucru / pauza</h3><hr/>");
+        chart.write("responseDataTableChart");
+        
+    };
+
+    var processDocumentChart2 = function(data){
+
+		var intervale = data.data.graphIntervals;
+		$('#responseDataTableChartBar').empty();
+		$('#responseDataTableChartBar').show();
+    	/*var intervale = {
+    			luni: [
+    				510, // 00:00 - 08:30
+    				565, // 08:30 - 17:55
+    				365 // 17:55 - 00:00
+    			],
+    			marti: [
+    				501, // - 00:00 - 08:21
+    				283, // 08:21 - 13:04
+    				44, // 13:04 - 13:48
+    				270, // 13:48 - 18:18
+    				342 // 18:18 - 00:00
+    			],
+    		};*/
+    		max = 0;
+    		for (var i in intervale) if (max<intervale[i].length) max = intervale[i].length;
+    		for (var i in intervale) for (var j=0;j<max;++j) if (typeof intervale[i][j] === 'undefined') intervale[i][j] = 0;
+    		var chartData = [];
+    		for (var i in intervale) {
+    			var data = {};
+    			for (var j=0; j<max; ++j) data[j] = (intervale[i][j]/3600).toFixed(2);
+    			data.key = i;
+    			chartData.push(data);
+    		}
+    		//console.log(chartData);
+    		
+    		chart = new AmCharts.AmSerialChart();
+    		chart.dataProvider = chartData;
+    		chart.categoryField = "date";
+    		chart.columnWidth = 0.1;
+    		chart.marginTop = 15;
+    		chart.marginLeft = 55;
+    		chart.marginRight = 15;
+    		chart.marginBottom = 80;
+    		// AXES
+    		// category
+    		var categoryAxis = chart.categoryAxis;
+    		categoryAxis.gridAlpha = 0.1;
+    		categoryAxis.axisAlpha = 0;
+    		categoryAxis.gridPosition = "start";
+    		categoryAxis.labelRotation = 45;
+    		//categoryAxis.equalSpacing = true;
+    		// value
+    		var valueAxis = new AmCharts.ValueAxis();
+    		valueAxis.stackType = "regular";
+    		valueAxis.gridAlpha = 0.1;
+    		valueAxis.axisAlpha = 0;
+    		valueAxis.min = 0;
+    		valueAxis.max = 24;
+    		valueAxis.columnSpacing = 10;
+    		chart.addValueAxis(valueAxis);
+    		chart.categoryField = "key";
+
+    		// GRAPHS
+    		for(var i=0; i<max; ++i) {
+    		
+    			chart.colors[i] = (i%2 == 0 ? '#FFFFFF' /* alb, pt. cele invizibile */ : '#000000' /* rosu, pt. cele vizibile */);
+    		
+    			var graph = new AmCharts.AmGraph();
+    			graph.valueField = i;
+    			chart.balloon.color = "#ccc";
+    			//chart.descriptionField = key+"_hint";
+    			graph.type = "column";
+    			graph.lineAlpha = 0;
+    			graph.fillAlphas = 1;
+    			chart.addGraph(graph);
+    			
+    			//console.log(graph);
+    		}
+
+            // WRITE
+    		//$("#responseDataTableChartBar").html("<h3 style=\"text-align:center;color:#3A3A3A\">Intervale de utilizare a calculatorului pentru WinUser/NumeAngajat</h3><hr/>");
+            chart.write("responseDataTableChartBar");
+
+    }
+  
+    var exportCurrent = function(type) {
+        var myFilters = getTimesSelectedFilters();
+        myFilters['users'] = parseUserSelectors();
+        var component = 'usage';
+        var action = 'activity';
+        exportReport(action, myFilters, type, component);
+    };
+
+</script>

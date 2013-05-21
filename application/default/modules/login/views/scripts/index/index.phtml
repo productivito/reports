@@ -1,0 +1,94 @@
+<div id="loginWrapper">
+    <span class="loginTitle"><h2>Productivo v2.0 - Monitorizare Corporate</h2></span>
+    <div class="loginBox">
+        <span style="color: red;"><?php echo $this->error; ?></span>
+        <form method="post" action="<?php echo $this->baseUrl($this->checkCredentialsLink); ?>">
+        <div class="formular_inner">
+            <div class="loginUsername">
+                <input type="text" name="username" value="Username" class="loginUsernameInput" />
+            </div>
+            <div class="loginPassword">
+                <input type="text" value="Parola" class="loginFakePswInput" />
+                <input type="password" name="password" value="" class="loginPswInput" style="display: none;" />
+            </div>
+            <div class="loginButtons">
+            	 <span class="loginSignInutton"><input type="submit" name="loginSignInutton" value="Login" ></span></div>
+                <!-- <span class="loginForgotPsw">Ti-ai uitat parola?</span> -->
+               
+       	   </div>
+        </form>
+            <br style="clear: both;" />
+        <div class="loginForgotPswDiv" style="<?php echo (empty($this->mailError)) ? 'display: none;' : 'display: block;'; ?>">
+            <form method="post" action="<?php echo $this->baseUrl($this->checkEmailLink); ?>">
+                <span style="color: red;"><?php echo $this->mailError; ?></span>
+                <!--<div class="loginEmail">
+                    <?php if(!empty($this->email)): ?>
+                        <input type="text" name="email" value="<?php echo $this->email; ?>" class="loginEmailInput" />
+                    <?php else: ?>
+                        <input type="text" name="email" value="Introdu adresa de email" class="loginEmailInput" />
+                    <?php endif; ?>
+                    <?php if($this->dobCheck == '1' && $this->dob == 1): ?>
+                    <br /><br />Geboortedatum: <br/>
+                    <select name="day">
+                        <?php for($i = 1; $i <= 31 ; $i++): ?>
+                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select name="month">
+                        <?php foreach($this->months as $monthNo => $month): ?>
+                            <option value="<?php echo ($monthNo+1); ?>"><?php echo $month; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select name="year">
+                        <?php for($i = (date('Y')-5); $i >= 1950 ; $i--): ?>
+                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <?php endif; ?>
+                    <span class="loginForgotbutton"><input type="submit" value="Trimite email" name="loginForgotbutton"></span>
+                </div> -->
+                <br style="clear: both;" />
+            </form>
+        </div>
+    </div>
+    <!-- <center><a class="loginContact "href="mailto:office@webio.ro">Contact<a/></center> -->
+</div>
+<script type="text/javascript">
+    $('.loginForgotPsw').live('click', function () {
+        $('.loginForgotPswDiv').toggle('slow');
+    });
+    
+    $('.loginFakePswInput').focus(function () {
+        $(this).hide();
+        $('.loginPswInput').show();
+        $('.loginPswInput').focus();
+    });
+    
+    $('.loginPswInput').focusout(function () {
+        if($(this).val() == '') {
+            $(this).hide();
+            $('.loginFakePswInput').show();
+            $('.loginPswInput').focus();
+        }
+    });
+    
+    $('.loginUsernameInput').focus(function () {
+        $(this).val('');
+    });
+    
+    $('.loginUsernameInput').focusout(function () {
+        if($(this).val() == ''){
+            $(this).val('Username');
+        }
+    });
+    
+    $('.loginEmailInput').focus(function () {
+        $(this).val('');
+    });
+    
+    $('.loginEmailInput').focusout(function () {
+        if($(this).val() == ''){
+            $(this).val('mail@mail.ro');
+        }
+    });
+</script>

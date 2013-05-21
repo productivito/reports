@@ -1,0 +1,755 @@
+<div id="reportTimeSelector">
+    <?php echo $this->partial('index/userreportfilters.phtml', array()); ?>
+</div>
+<div id="report">
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <h2>
+        Raport Chat
+        <a href="#" style="float:right">Descrie raport</a>
+    </h2><hr/>
+    <center style="margin:0px auto;">
+        <div id="tableChartDraw" style="width:48%;margin:10px 0px;display:inline-block;">
+            <div id="responseDataTableChart" style="height:400px;width:100%;"></div>
+            <center>
+                <input type="text" id="reGenerateChartRecNo" size="2" value="10" />
+                <input type="button" id="reGenerateChart"  value="Redeseneaza" />
+            </center>
+        </div>
+        <div id="tableChartDrawProd" style="width:48%;margin:10px 0px;display:inline-block; float:right;">
+            <div id="responseDataTableChartProd" style="height:417px;width:100%;"></div>
+        </div>
+        <div id="loader_graph" class="hidden_chart">
+        	<img  style='margin-left:auto;margin-right:auto' src=' <?php echo $this->baseUrl(); ?>/img/ajax-loader-table.gif' height='60px' width='60px' ></br>
+        	<span style='margin-left:auto;margin-right:auto;font-weight:bold;font-size:17px'>
+        		Se incarca
+        	</span>
+        </div>        
+    </center>
+    <div id="tableTabs" class="tabs" style="margin-bottom:10px;padding-bottom:10px;">
+        <input type="hidden" id="resultFilters" />
+        <input type="hidden" id="resultContainer" />
+        <ul>
+            <li><a class="tableTab" id="tableContainerLink" href="#tableContainer">Top ID-uri</a></li>
+            <li><a class="tableTab" id="cronoContainerLink" href="#cronoContainer">Lista cronologica</a></li>
+        </ul>
+        <div id="container">
+        	<div id="tableContainer"></div>
+      		<div id="paginationButtonsTableContainer">
+      			<span style="float:right;margin-top:-48px;margin-right:33px;"><button id="ajaxCallPaginationPrevious">Previous</button>
+      			<button id="ajaxCallPaginationNext">Next</button></span>
+      		</div>
+      		 <div id="cronoContainer"></div>
+      		<div id="paginationButtonsCronContainer" class="hidden">
+      			<span style="float:right;margin-top:-48px;margin-right:33px;"><button id="ajaxCallPaginationPreviousCron">Previous</button>
+      			<button id="ajaxCallPaginationNextCron">Next</button></span>
+      		</div>
+      	</div>
+    </div>
+    <div class="export" id="exportChat">
+        <hr/>
+        <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+    </div>
+</div>
+
+<!-- JS Local methods -->
+<script type="text/javascript">
+    // Link the local processing action to the filtering pane
+    $(document).ready(function() {
+        
+        var topResponseData = null;
+        
+        $('#tableTabs').hide();
+        $('#tableChartDraw').hide();
+        $('#tableTabs').tabs();
+        
+		$('#tableContainerLink').click(function() {
+			$("#paginationButtonsCronContainer").addClass('hidden')
+			$("#paginationButtonsTableContainer").removeClass('hidden')
+		});
+
+		$('#cronoContainerLink').click(function() {
+			$("#paginationButtonsCronContainer").removeClass('hidden')
+			$("#paginationButtonsTableContainer").addClass('hidden')
+		});        
+        
+        $('#reGenerateChart').click(function() {
+        
+	        var myFilters = getTimesSelectedFilters();
+	        if (myFilters !== false) {
+	            myFilters.user = $('#orgSelectedUser').text();
+	            myFilters['users'] = parseUserSelectors();	
+	            var call = $.ajax({
+	                type: 'POST',
+	                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+	                data: {
+	                    filters : myFilters,
+	                    users : parseUserSelectors(),
+	                    page : parseInt($("#reGenerateChartRecNo").val()),
+	                    type : 'chart'                
+	                },
+	                beforeSend: function() {
+	                	$('#tableChartDrawProd').hide();
+	                    $('#tableChartDraw').hide();
+	                    $('#loader_graph').removeClass('hidden_chart');
+	                },
+	                statusCode: {
+	                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+	                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+	                }
+	            }).done(function() {
+	                var data = eval('(' + call.responseText + ')');
+		            processDocumentsChart(data, $("#reGenerateChartRecNo").val());
+		            $('#tableChartDraw').show();				
+					$('#tableChartDrawProd').show();
+					 $('#loader_graph').addClass('hidden_chart');
+	                // Keep data and filters
+	                $('#resultFilters').val(data.filters);
+	                topResponseData = data;
+	                //processDocumentsChart(data, 10);
+	               // $('#tableChartDraw').show();
+	
+	            }).fail(function() {
+	                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+	            }).always(function() {
+	                $('#loader').hide();
+	                $('#tableTabs').show();
+	            });
+	          }        
+        
+          //  $('#tableChartDraw').hide();
+           // processDocumentsChart(topResponseData, $("#reGenerateChartRecNo").val());
+            //$('#tableChartDraw').show();
+        });
+        
+        $('#ajaxCallPaginationNext').click(ajaxCallPaginationNext);
+        $('#ajaxCallPaginationPrevious').click(ajaxCallPaginationPrevious);
+        
+        $('#ajaxCallPaginationNextCron').click(ajaxCallPaginationNextCron);
+        $('#ajaxCallPaginationPreviousCron').click(ajaxCallPaginationPreviousCron);           
+        
+        $('#ajaxTimedFilterAction').click(ajaxCall);       
+
+
+    });
+    
+       
+        var ajaxCall = function() {
+            var myFilters = getTimesSelectedFilters();
+            if (myFilters !== false) {
+                var call = $.ajax({
+                    type: 'POST',
+                    url: '<?php echo $this->baseUrl('ajax/chat'); ?>',
+                    data: {
+                        filters : myFilters,
+                        users : parseUserSelectors(),
+                        type :'top',
+                        numberPerPage: 100
+                    },
+                    beforeSend: function() {
+                        $('#tableContainer').empty();
+                        $('#cronoContainer').empty();
+                        $('#tableTabs').hide();
+                        $('#loader').show();
+                    },
+                    statusCode: {
+                        404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                        500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                    }
+                }).done(function() {
+                    var data = eval('(' + call.responseText + ')');
+                    $('#tableContainer').html(processDocumentsTable(data,1,100));
+                    $('#tableContainer').css('overflow','scroll');
+       						 										
+                    $('#cronoContainer').html(processCronDocumentsTable(data,1,100));
+                    $('#cronoContainer').css('overflow','scroll');
+			 		$("select").change(function () {
+			 		  if($(this).attr('id') == 'numberElements'){
+			 		  	ajaxCallSetNumberElementsPerPage($(this).attr('value'));
+			 		  }
+			          else 
+				          if($(this).attr('id') == 'numberElementsCron')
+				          {
+				          	ajaxCallSetNumberElementsPerPageCron($(this).attr('value'));
+				          }
+				          else
+				          {
+				          		changeType($(this).attr('value'),'chat',$(this).attr('id'));
+				          }
+			        });                    
+                    
+                    $('#responseCronsDataTable').dataTable();
+                    
+                    processDocumentsChartProd(data);
+                    /*$('.prodcharddata').change(function() {
+                        processDocumentsChartProd();
+                    });*/
+                    
+                    // Keep data and filters
+                    $('#resultFilters').val(data.filters);
+                    topResponseData = data;
+                    processDocumentsChart(data, 10);
+                    $('#tableChartDraw').show();
+                    
+                }).fail(function() {
+                    $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+                }).always(function() {
+                    $('#loader').hide();
+                    $('#tableTabs').show();
+                });
+            }
+        }  
+    
+	var ajaxCallPaginationNext = function() {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage: $("#numberElements :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();
+                	$('#tableChartDrawProd').hide();
+                    $('#tableChartDraw').hide();      
+                    $('#loader_graph').removeClass('hidden_chart');              
+                    $('#tableContainer').empty();
+                    $("#paginationButtonsTableContainer").addClass('hidden');
+                    
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $('#tableContainer').css('overflow','scroll');	
+                $("#paginationButtonsTableContainer").removeClass('hidden');
+                
+                $('#loader_graph').addClass('hidden_chart');	
+                processDocumentsChartProd(data);
+            	$('#tableChartDrawProd').show();
+                $('#tableChartDraw').show();
+                	
+		 		$("select").change(function () {
+		 		  if($(this).attr('id') != 'numberElements')
+		          	changeType($(this).attr('value'),'chat',$(this).attr('id'));
+		          else 
+		          {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));
+			          }
+			          
+			     }); 		
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPage = function(numberPerPage) {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();     
+                    $('#tableChartDrawProd').hide();
+                    $('#tableChartDraw').hide();      
+                    $('#loader_graph').removeClass('hidden_chart');           	
+                    $('#tableContainer').empty();
+                    $("#paginationButtonsTableContainer").addClass('hidden');
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $('#tableContainer').css('overflow','scroll');		
+                $("#paginationButtonsTableContainer").removeClass('hidden');		
+                $('#loader_graph').addClass('hidden_chart');	
+                processDocumentsChartProd(data);
+            	$('#tableChartDrawProd').show();
+                $('#tableChartDraw').show();
+                		
+		 		$("select").change(function () {
+		 		  if($(this).attr('id') != 'numberElements')
+		          	changeType($(this).attr('value'),'chat',$(this).attr('id'));
+		          else 
+		          {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));
+		          }
+		          
+		        }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPrevious = function() {
+		var page = $("#currentPage").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPrevious").attr('disabled','disabled');
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage: $("#numberElements :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                
+                    $('#tableContainer').empty();
+                    $('#tableChartDrawProd').hide();
+                    $('#tableChartDraw').hide();      
+                    $('#loader_graph').removeClass('hidden_chart');  
+                    
+                    $("#paginationButtonsTableContainer").addClass('hidden');
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $('#tableContainer').css('overflow','scroll');	
+                $("#paginationButtonsTableContainer").removeClass('hidden'); 	
+                
+                $('#loader_graph').addClass('hidden_chart');	
+                processDocumentsChartProd(data);
+            	$('#tableChartDrawProd').show();
+                $('#tableChartDraw').show();
+                		
+		 		$("select").change(function () {
+		 		  if($(this).attr('id') != 'numberElements')
+		          	changeType($(this).attr('value'),'chat',$(this).attr('id'));
+		          else 
+		          {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));
+		          }
+		          
+		        }); 			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };  
+    
+     /* ######################### Cron Pagination ######################### */
+   
+   
+   	var ajaxCallPaginationNextCron = function() {
+	
+		var page = $("#currentPageCron").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		if(page > 1)
+			$("#ajaxCallPaginationPreviousCron").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'cron',
+                    numberPerPage: $("#numberElementsCron :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElementsCron :selected").text();
+                    $('#cronoContainer').empty();
+                    $('#cronoContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#paginationButtonsCronContainer").addClass('hidden');                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#cronoContainer').html(processCronDocumentsTable(data,page,n));
+                $('#cronoContainer').css('overflow','scroll');
+                $("#paginationButtonsCronContainer").removeClass('hidden');	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPageCron($(this).attr('value'));
+			        
+			     }); 	
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#cronoContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPageCron = function(numberPerPage) {
+	
+		var page = $("#currentPageCron").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPreviousCron").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'cron',
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElementsCron :selected").text();                	
+                    $('#cronoContainer').empty();
+                    $('#cronoContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#paginationButtonsCronContainer").addClass('hidden');                     
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+				$('#cronoContainer').html(processCronDocumentsTable(data,page,n));
+				$('#cronoContainer').css('overflow','scroll');	
+				$("#paginationButtonsCronContainer").removeClass('hidden'); 	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPageCron($(this).attr('value'));
+			        
+			     }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#cronoContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPreviousCron = function() {
+		var page = $("#currentPageCron").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPreviousCron").attr('disabled','disabled');
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/chatpage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'cron',
+                    numberPerPage: $("#numberElementsCron :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElementsCron :selected").text();                
+                    $('#cronoContainer').empty();
+                    $('#cronoContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#paginationButtonsCronContainer").addClass('hidden');                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+				$('#cronoContainer').html(processCronDocumentsTable(data,page,n));
+				$('#cronoContainer').css('overflow','scroll');	
+				$("#paginationButtonsCronContainer").removeClass('hidden');	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPageCron($(this).attr('value'));
+			     
+			     });  			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#cronoContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };    
+       
+    
+    var changeType = function(type,category,name)
+    {
+    	var inf = {
+    		'type' : type,
+    		'category' : category,
+    		'name' : name
+    	} ;
+		 $.ajax({
+            type : "POST",
+            url : "<?php echo $this->baseUrl('index/settypecategory'); ?>",
+            data: {inf: inf},
+            dataType : "json",
+            success : function(data) {
+                //window.location.reload()
+
+            }
+ 	 	  });    
+    }    
+    
+
+    var processDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var dt = data.data.usage;
+		var select = '<select id="numberElements">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";	
+        var output = select + '<table id="topTable">';
+        // header
+        output += '<thead><tr>';
+        output += '<th>Icon</th>';
+        output += '<th>User ID</th>';
+        output += '<th>Tip ID</th>';
+        output += '<th>Utilizare %</th>';
+        output += '<th>Durata</th>';
+        output += '</tr></thead><tbody>';
+        // data
+        for (i in dt) {
+            output += '<tr>';
+            output += '<td>' + dt[i].icon +'</td>';
+            output += '<td>' + dt[i].remoteUser + '</td>';
+            output += '<td>' + dt[i].selector + '</td>';
+            output += '<td>' + dt[i].usagePercent + '</td>';
+            output += '<td>' + dt[i].usageTime + '</td>';
+            output += '</tr>';
+        }
+        output += '</tbody></table></br>Pagina <div id="currentPage">'+ page + '</div>';
+        return output;
+    };
+
+    var processCronDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var dt = data.data.crons;
+        
+		var select = '<select id="numberElementsCron">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";
+		        
+        var output = select + '<table id="topTable">';
+        // header
+        output += '<thead><tr>';
+        output += '<th>Icon</th>';
+        output += '<th>Calculator</th>';
+        output += '<th>User</th>';
+        output += '<th>User ID</th>';
+        output += '<th>Data / Ora start</th>';
+        output += '<th>Ora stop</th>';
+        output += '<th>Durata</th>';
+        output += '</tr></thead><tbody>';
+        // data
+        for (i in dt) {
+            output += '<tr>';
+            output += '<td>' + dt[i].icon + '</td>';
+            output += '<td>' + dt[i].computer + '</td>';
+            output += '<td>' + dt[i].user + '</td>';
+            output += '<td>' + dt[i].remoteUser + '</td>';
+            output += '<td>' + dt[i].tStart + '</td>';
+            output += '<td>' + dt[i].hEnd + '</td>';
+            output += '<td>' + dt[i].duration + '</td>';
+            output += '</tr>';
+        }
+        output += '</tbody></table></br>Pagina <div id="currentPageCron">'+ page + '</div>';
+        return output;
+    };
+    
+    var processDocumentsChart = function(data, top) {
+        $('#responseDataTableChart').empty();
+        $('#tableChartDraw').hide();
+        if (typeof(top) === 'undefined') {
+            var top = 10;
+        }
+        var counter = 0;
+        var chartData = [];
+        var dt = data.data.graph;
+        for (i in dt) {
+            if (top > 0 && counter < top) {
+                chartData.push({'UserID' : dt[i].Item, 'Utilizare' : dt[i].Usage});
+            }
+            ++counter;
+        }
+        var chart = new AmCharts.AmPieChart();
+        chart.dataProvider = chartData;
+        chart.titleField = "UserID";
+        chart.valueField = "Utilizare";
+        chart.labelText = "[[percents]]%";
+        
+        chart.outlineColor = "#FFFFFF";
+        chart.outlineAlpha = 0.8;
+        chart.outlineThickness = 2;
+        
+        $('#tableChartDraw').show();
+        $("#responseDataTableChart").html("<h3 style=\"text-align:left;color:#3A3A3A\" >Utilizare</h3><hr/>");
+        chart.write("responseDataTableChart");
+    };
+
+    var processDocumentsChartProd = function(data) {
+    	var dt = data.data.graphProd;
+    	
+        $('#responseDataTableChartProd').empty();
+        $('#tableChartDrawProd').hide();
+        //var x = {productive:0, unproductive:0, unclassified:0};
+       
+        /*$('.prodcharddata').each(function() { ++x[$(this).val()]; });
+        var chartData = [
+            { Tip : "Productiv", Valoare : (x["productive"] * 100) / $('.prodcharddata').size() },
+            { Tip : "Neproductiv", Valoare : (x["unproductive"] * 100) / $('.prodcharddata').size() },
+            { Tip : "Neclasificat", Valoare : (x["unclassified"] * 100) / $('.prodcharddata').size() },
+        ];*/
+        var chartData = [
+                         { Tip : "Productiv", Valoare : ((dt.productive * 100) / dt.total).toFixed(2)  },
+                         { Tip : "Neproductiv", Valoare : ((dt.unproductive * 100) / dt.total).toFixed(2)  },
+                         { Tip : "Neclasificat", Valoare : ((dt.unclassified * 100) / dt.total).toFixed(2)  },
+                     ];
+        var chart = new AmCharts.AmPieChart();
+        chart.dataProvider = chartData;
+        chart.titleField = "Tip";
+        chart.valueField = "Valoare";
+        chart.outlineColor = "#FFFFFF";
+        chart.outlineAlpha = 0.8;
+        chart.outlineThickness = 2;
+        $('#tableChartDrawProd').show();
+        $("#responseDataTableChartProd").html("<h3 style=\"text-align:left;color:#3A3A3A\">Productivitate</h3><hr/>");
+        chart.write("responseDataTableChartProd");
+    };
+
+    var exportCurrent = function(type) {
+        var myFilters = getTimesSelectedFilters();
+        myFilters['users'] = parseUserSelectors();
+        var component = $('#tableTabs li.ui-state-active a').attr('id') == 'tableContainerLink' ? 'usage' : 'crons';
+        var action = 'chat';
+        exportReport(action, myFilters, type, component);
+    };
+
+</script>

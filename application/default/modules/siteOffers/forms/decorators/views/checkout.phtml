@@ -1,0 +1,21 @@
+<tr>
+    <td id="siteOffersModule_orderHeader" colspan="3" style="width:491px;text-align:center;"><?php echo $this->arrLabels[0]; ?></td>
+</tr>
+<tr>
+    <td style="width:34%;"><?php echo $this->arrLabels[1]; ?></td>
+    <td><?php echo $this->arrLabels[2]; ?></td>
+    <td><?php echo $this->arrLabels[3]; ?></td>
+</tr>
+<tr>
+    <td><strong><s>&euro; <?php echo $this->arrLabels[4]; ?></s></strong></td>
+    <td><strong>&euro; <?php echo $this->arrLabels[5]; ?></strong></td>
+    <td><?php echo $this->inputField; ?></td>
+</tr>
+<tr>
+    <td colspan="3">&nbsp;</td>
+</tr>
+<?php if(!empty($this->arrLabels[6])): ?>
+<tr id="siteOffersModule_orderFooter">
+    <td colspan="3" style="width:491px;text-align:center;"><?php echo $this->arrLabels[6]; ?></td>
+</tr>
+<?php endif; ?>

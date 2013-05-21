@@ -1,0 +1,10 @@
+<?php foreach ($this->moduleCategoriesAndOffers as $arrCategory): ?>
+    <div class="siteOffersModule_offerCategoryContainer">
+        <div class="siteOffersModule_offerCategoryHeader"><?php echo $arrCategory['category_name']; ?></div>
+        <?php foreach ($arrCategory['products'] as $arrProducts): ?>
+            <?php //echo '<pre>'.print_r($arrProducts,true);die(); ?>
+            <div class="siteOffersModule_offerCategoryItem"><a href="<?php echo $this->baseUrl('index/offer/id/' . $arrProducts['product_ID']); ?>"><?php echo $arrProducts['product_name']; ?></a></div>
+        <?php endforeach; ?>
+        <span class="siteOffersModule_offerCategoryExtend">+ Uiklappen</span>
+    </div>    
+<?php endforeach; ?>

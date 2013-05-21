@@ -1,0 +1,457 @@
+<div id="reportTimeSelector">
+	<div id="time_filter1" style="float:left;margin:10px">
+	 	<input type="radio" class="step1radio" id="hourly_deviation" name="month" value="01"  />
+	    <label for="01">Ianuarie</label><br/>
+	    <input type="radio" class="step1radio" id="inactivity" name="month" value="02" />
+	    <label for="02">Februarie</label><br/>
+	    <input type="radio" class="step1radio" id="unproductive" name="month" value="03" />
+	    <label for="03">Martie</label><br/>	
+	 	<input type="radio" class="step1radio" id="hourly_deviation" name="month" value="04" />
+	    <label for="05">Aprilie</label><br/>
+	    <input type="radio" class="step1radio" id="inactivity" name="month" value="05" checked="checked" />
+	    <label for="05">Mai</label><br/>
+	    <input type="radio" class="step1radio" id="unproductive" name="month" value="06"  />
+	    <label for="06">Iunie</label><br/>	
+	 	<input type="radio" class="step1radio" id="hourly_deviation" name="month" value="07" />
+	    <label for="07">Iulie</label><br/>
+	    <input type="radio" class="step1radio" id="inactivity" name="month" value="08" />
+	    <label for="08">August</label><br/>
+	    <input type="radio" class="step1radio" id="unproductive" name="month" value="09" />
+	    <label for="09">Septembrie</label><br/>	
+	 	<input type="radio" class="step1radio" id="hourly_deviation" name="month" value="10" />
+	    <label for="10">Octombrie</label><br/>
+	    <input type="radio" class="step1radio" id="inactivity" name="month" value="11" />
+	    <label for="11">Noiembrie</label><br/>
+	    <input type="radio" class="step1radio" id="unproductive" name="month" value="12" />
+	    <label for="12">Decembrie</label><br/>	        
+    </div>   
+    
+    <div id="time_filter2" style= "float:left;margin-top:14px">
+    	<label for="year">Anul</label></br>
+ 	    <input type="text" class="year" id="year" name="year" VALUE="<?php echo date('Y'); ?>" />
+	    	
+    	
+    </div> 
+   </br>
+    <input type="button" id="ajaxTimedFilterAction" value="Genereaza" style="clear:both;display:block"/>
+	       
+</div>
+<form style="display:none;" id="exportDocumentForum" action="#" method="POST" target="_blank">
+    <input type="hidden" name="filters" id="exportDocumentFilters" value="" />
+    <input type="hidden" name="dataset" id="exportDocumentAction" value="" />
+    <input type="hidden" name="doctype" id="exportDocumentType" value="" />
+    <input type="hidden" name="component" id="exportDocumentComponent" value="" />
+</form>
+<script>
+    var exportReport = function(action, filters, type, component) {
+        if (typeof(action) === 'undefined') {
+            alert("Actiune nedefinita in functia de export");
+            return;
+        }
+        if (typeof(filters) === 'undefined') {
+            alert("Filtre nedefinite in functia de export");
+            return;
+        }
+        if (typeof(type) === 'undefined') {
+            alert("Format de document necunoscut in functia de export");
+            return;
+        }
+        switch(type) {
+            case 'pdf':
+            case 'csv':
+                $('#exportDocumentAction').val(action);
+                $('#exportDocumentFilters').val(JSON.stringify(filters));
+                $('#exportDocumentType').val(type);
+                $('#exportDocumentComponent').val(component);
+                $('#exportDocumentForum').attr('action', '<?=$this->baseUrl('export/') ?>' + type);
+                $('#exportDocumentForum').submit();
+                break;
+            default:
+                alert("Format de document necunoscut in functia de export");
+                return;
+                break;
+        }
+    };
+</script>
+<div id="report">
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <h2>
+        Fisa de pontaj
+        <a href="#" style="float:right">Descrie raport</a>
+    </h2><hr/>
+    <div id="tableChartDraw" style="width:100%;margin:10px auto;">
+        <div id="responseDataTableChart" style="height:400px;width:100%;"></div>
+    </div>
+    <div id="tableTabs" class="tabs" style="margin-bottom:10px;padding-bottom:10px;">
+        <input type="hidden" id="resultFilters" />
+        <input type="hidden" id="resultContainer" />
+        <div id="container">
+        	<div id="tableContainer"></div>
+      		<span id="menuButton" style="float:right;margin-top:-48px;margin-right:33px;"><button id="ajaxCallPaginationPrevious">Previous</button>
+      		<button id="ajaxCallPaginationNext">Next</button></span>
+      		 <div id="cronoContainer"></div>
+      	</div>
+    </div>
+    <div class="export" id="exportDocuments">
+        <hr/>
+        <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+    </div>
+</div>
+
+<!-- JS Local methods -->
+<script type="text/javascript">
+    // Link the local processing action to the filtering pane
+    $(document).ready(function() {
+        
+        var topResponseData = null;
+        
+        $('#tableTabs').hide();
+        $('#tableChartDraw').hide();
+        $('#tableTabs').tabs();
+
+        $('#ajaxCallPaginationNext').click(ajaxCallPaginationNext);
+        $('#ajaxCallPaginationPrevious').click(ajaxCallPaginationPrevious);
+
+        $('#ajaxTimedFilterAction').click(function() {
+            var myFilters = {
+            	'month' : $('input[name=month]:checked').val(),
+            	'year' : $('input[name=year]').val(),
+            	'users' : parseUserSelectors()
+            };
+            //alert(myFilters);
+            //console.log(myFilters);
+            if (myFilters !== false) {
+                var call = $.ajax({
+                    type: 'POST',
+                    url: '<?php echo $this->baseUrl('ajax/timekeeping'); ?>',
+                    data: {
+                        filters : myFilters,
+                        users : parseUserSelectors(),
+                        page : 1,
+                        numberPerPage : 100
+                    },
+                    beforeSend: function() {
+                        $('#tableContainer').empty();
+                        $('#cronoContainer').hide();
+                        $('#tableTabs').hide();
+                        $('#loader').show();
+                    },
+                    statusCode: {
+                        404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                        500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                    }
+                }).done(function() {
+                    //var data = eval('(' + call.responseText + ')');.
+                    var data = eval('(' + call.responseText + ')');
+                    
+           
+                    $('#tableContainer').css('overflow','scroll');
+                    $('#tableContainer').html(processDocumentsTable(data.data,1,100));
+                    $('#responseDataTable').dataTable();
+                    
+	 		 		$("select").change(function () {
+			          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));	          
+			        });      
+			                     
+                    // Keep data and filters
+                    $('#resultFilters').val(data.filters);
+                    topResponseData = data;
+                    
+                }).fail(function() {
+                    $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+                }).always(function() {
+                    $('#loader').hide();
+                    $('#tableTabs').show();
+                });
+            }
+        });
+    });
+    
+	var ajaxCallPaginationNext = function() {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+            var myFilters = {
+            	'month' : $('input[name=month]:checked').val(),
+            	'year' : $('input[name=year]').val(),
+            	'users' : parseUserSelectors()
+            };
+        if (myFilters !== false) {
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/timekeeping'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),                    
+                    page : page,
+                    numberPerPage: $("#numberElements :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                      
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data.data,page,n));
+                $("#menuButton").removeClass('hidden');
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));	          
+		        });		
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPage = function(numberPerPage) {
+        var myFilters = {
+        	'month' : $('input[name=month]:checked').val(),
+        	'year' : $('input[name=year]').val(),
+        	'users' : parseUserSelectors()
+        };	
+		var page = $("#currentPage").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        if (myFilters !== false) {
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/timekeeping'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),                    
+                    page : page,
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                	
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                  
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data.data,page,n));
+                $("#menuButton").removeClass('hidden');	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));	          
+		        }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPrevious = function() {
+        var myFilters = {
+        	'month' : $('input[name=month]:checked').val(),
+        	'year' : $('input[name=year]').val(),
+        	'users' : parseUserSelectors()
+        };	
+		var page = $("#currentPage").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPrevious").attr('disabled','disabled');
+        if (myFilters !== false) {
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/timekeeping'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),                    
+                    page : page,
+                    numberPerPage: $("#numberElements :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data.data,page,n));
+                $("#menuButton").removeClass('hidden');	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));	          
+		        }); 			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };    
+
+    var processDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var data = data.usage;
+   
+		var select = '<select id="numberElements">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";	
+        var output = select + '<table id="topTable" class="tablePunchIn">';
+        // header
+        output += '<thead><tr>';
+        output += '<th>Departament</th>';
+        output += '<th>WinUser</th>';
+        output += '<th>Nume</th>';
+        output += '<th >CNP</th>';
+        output += '<th >1</th>';
+        output += '<th >2</th>';
+        output += '<th >3</th>';
+        output += '<th >4</th>';
+        output += '<th >5</th>';
+        output += '<th >6</th>';
+        output += '<th >7</th>';
+        output += '<th >8</th>';
+        output += '<th >9</th>';
+        output += '<th >10</th>';
+        output += '<th>11</th>';
+        output += '<th>12</th>';
+        output += '<th>13</th>';
+        output += '<th>14</th>';
+        output += '<th>15</th>';
+        output += '<th>16</th>';
+        output += '<th>17</th>'; 
+        output += '<th>18</th>'; 
+        output += '<th>19</th>';
+        output += '<th>20</th>';  
+        output += '<th>21</th>';
+        output += '<th>22</th>';
+        output += '<th>23</th>';
+        output += '<th>24</th>';
+        output += '<th>25</th>';
+        output += '<th>26</th>';
+        output += '<th>27</th>';
+        output += '<th>28</th>';
+        output += '<th>29</th>';
+        output += '<th>30</th>';
+        output += '<th>31</th>';
+        output += '<th>Total ore</th>';
+        output += '<th>Zile lucrate</th>';   
+        output += '<th>Zile nelucrate</th>';                  
+        output += '</tr></thead><tbody>';
+        // data
+        //console.log(data);
+        for (i in data) {
+            output += '<tr>';
+            output += '<td>' + data[i].department + '</td>';
+            output += '<td>' + data[i].winName + '</td>';
+            output += '<td>' + data[i].complete_name + '</td>';
+            output += '<td>' + data[i].cnp + '</td>'; 
+            output += '<td>' + data[i].day01 + '</td>';
+            output += '<td>' + data[i].day02 + '</td>';
+            output += '<td>' + data[i].day03 + '</td>';
+            output += '<td>' + data[i].day04 + '</td>';
+            output += '<td>' + data[i].day05 + '</td>';
+            output += '<td>' + data[i].day06 + '</td>';
+            output += '<td>' + data[i].day07 + '</td>';
+            output += '<td>' + data[i].day08 + '</td>';
+            output += '<td>' + data[i].day09 + '</td>';
+            output += '<td>' + data[i].day10 + '</td>';
+            output += '<td>' + data[i].day11 + '</td>';
+            output += '<td>' + data[i].day12 + '</td>';
+            output += '<td>' + data[i].day13 + '</td>';
+            output += '<td>' + data[i].day14 + '</td>';
+            output += '<td>' + data[i].day15 + '</td>';
+            output += '<td>' + data[i].day16 + '</td>';
+            output += '<td>' + data[i].day17 + '</td>';
+            output += '<td>' + data[i].day18 + '</td>';
+            output += '<td>' + data[i].day19 + '</td>';
+            output += '<td>' + data[i].day20 + '</td>';
+            output += '<td>' + data[i].day21 + '</td>';
+            output += '<td>' + data[i].day22 + '</td>';
+            output += '<td>' + data[i].day23 + '</td>';
+            output += '<td>' + data[i].day24 + '</td>';
+            output += '<td>' + data[i].day25 + '</td>';
+            output += '<td>' + data[i].day26 + '</td>';
+            output += '<td>' + data[i].day27 + '</td>';
+            output += '<td>' + data[i].day28 + '</td>';
+            output += '<td>' + data[i].day29 + '</td>';
+            output += '<td>' + data[i].day30 + '</td>';
+            output += '<td>' + data[i].day31 + '</td>';
+            output += '<td>' + data[i].total_hours + '</td>';
+            output += '<td>' + data[i].zilelucrate + '</td>';
+            output += '<td>' + data[i].zilenelucrate + '</td>';                           
+            output += '</tr>';
+        }
+        output += '</tbody></table></br>Pagina <div id="currentPage">'+ page + '</div>';
+       
+        return output;
+    };
+    
+    
+    var exportCurrent = function(type) {
+        var myFilters = {
+            	'month' : $('input[name=month]:checked').val(),
+            	'year' : $('input[name=year]').val(),
+            	'users' : parseUserSelectors()
+            };
+        myFilters['users'] = parseUserSelectors();
+        var component = 'usage';
+        var action = 'timekeeping';
+        exportReport(action, myFilters, type, component);
+    };
+
+</script>

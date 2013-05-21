@@ -1,0 +1,410 @@
+<div id="reportTimeSelector">
+    <?php echo $this->partial('index/userreportfilters.phtml', array()); ?>
+</div>
+<div id="report">
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <h2>
+        Top productivitate angajati
+        <a href="#" style="float:right">Descrie raport</a>
+    </h2><hr/>
+    <div id="tableChartDraw" style="width:100%;margin:10px auto;">
+        <div id="responseDataTableChart" style="height:400px;width:100%;"></div>
+    </div>
+    <div id="tableTabs" class="tabs" style="margin-bottom:10px;padding-bottom:10px;">
+        <input type="hidden" id="resultFilters" />
+        <input type="hidden" id="resultContainer" />
+        <div id="container">
+        	<div id="tableContainer"></div>
+      		<span id="menuButton" style="float:right;margin-top:-33px;"><button id="ajaxCallPaginationPrevious">Previous</button>
+      		<button id="ajaxCallPaginationNext">Next</button></span>
+      	</div>
+    </div>
+    <div class="export" id="exportDocuments">
+        <hr/>
+         <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+    </div>
+</div>
+
+<!-- JS Local methods -->
+<script type="text/javascript">
+    // Link the local processing action to the filtering pane
+    $(document).ready(function() {
+        
+        var topResponseData = null;
+        
+        $('#tableTabs').hide();
+        $('#tableChartDraw').hide();
+        $('#tableTabs').tabs();
+        $('#reGenerateChart').click(function() {
+            $('#tableChartDraw').hide();
+            processDocumentsChart(topResponseData);
+            $('#tableChartDraw').show();
+        });
+        $('#ajaxTimedFilterAction').click(function() {
+            var myFilters = getTimesSelectedFilters();
+            console.log(myFilters);
+            if (myFilters !== false) {
+                var call = $.ajax({
+                    type: 'POST',
+                    url: '<?php echo $this->baseUrl('ajax/top'); ?>',
+                    data: {
+                        filters : myFilters,
+                        users : parseUserSelectors(),
+                        page : 1
+                    },
+                    beforeSend: function() {
+                        $('#tableContainer').empty();
+                        $('#cronoContainer').empty();
+                        $('#tableTabs').hide();
+                        $('#loader').show();
+                    },
+                    statusCode: {
+                        404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                        500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                    }
+                }).done(function() {
+                    var data = eval('(' + call.responseText + ')');
+                    $('#tableContainer').html(processDocumentsTable(data,1,100));
+                    $('#responseDataTable').dataTable();
+    		 		$("select").change(function () {
+    		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+    		        }); 
+                                    
+                    // Keep data and filters
+                    $('#resultFilters').val(data.filters);
+                    topResponseData = data;
+                    processDocumentsChart(data);
+                    $('#tableChartDraw').show();
+                    
+                }).fail(function() {
+                    $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+                }).always(function() {
+                    $('#loader').hide();
+                    $('#tableTabs').show();
+                });
+            }
+        });
+
+  	    $('#ajaxCallPaginationNext').click(ajaxCallPaginationNext);
+        $('#ajaxCallPaginationPrevious').click(ajaxCallPaginationPrevious);        
+        
+    });
+    
+	var ajaxCallPaginationNext = function() {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {      
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/top'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    numberPerPage: $("#numberElements :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                     
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $("#menuButton").removeClass('hidden');      
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 		
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPage = function(numberPerPage) {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {      
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/top'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                	
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                      
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $("#menuButton").removeClass('hidden');	
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPrevious = function() {
+		var page = $("#currentPage").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPrevious").attr('disabled','disabled');
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {    
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/top'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    numberPerPage: $("#numberElements :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButton").addClass('hidden');                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $("#menuButton").removeClass('hidden');	
+                
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };    
+
+    var processDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var dt = data.data.usage;
+		var select = '<select id="numberElements">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";	
+        var output = select + '<table id="topTable">';
+        // header
+        output += '<thead><tr>';
+        output += '<th>Utilizator</th>';
+        output += '<th>Nume</th>';
+        output += '<th>Timp pornit (h)</th>';
+        output += '<th>Total pauze legale (h)</th>';
+        output += '<th>Ore productive</th>';
+        output += '<th>Ore neproductive</th>';
+        output += '<th>% Productivitate</th>';
+        output += '<th>% Neproductivitate</th>';
+        output += '</tr></thead><tbody>';
+        // data
+        for (i in dt) {
+            output += '<tr>';
+            output += '<td>' + dt[i].user + '</td>';
+            output += '<td>' + dt[i].name + '</td>';
+            output += '<td>' + dt[i].total_table + '</td>';
+            output += '<td>' + dt[i].breaks_table + '</td>';
+            output += '<td>' + dt[i].prod + '</td>';
+            output += '<td>' + dt[i].idle + '</td>';
+            output += '<td>' + dt[i].prodpercent + '</td>';
+            output += '<td>' + dt[i].idlepercent + '</td>';
+            output += '</tr>';
+        }
+        output += '</tbody></table></br>Pagina <div id="currentPage">'+ page + '</div>';
+        return output;
+    };
+    
+    var processDocumentsChart = function(data) {
+        $('#responseDataTableChart').empty();
+        $('#tableChartDraw').hide();
+        if (typeof(top) === 'undefined') {
+            var top = 10;
+        }
+        
+        var chartData = [];
+        var dt = data.data.graph;
+        var counter = 0;
+        for (i in dt) {
+            chartData.push({
+                'user' : dt[i].user,
+                'total' : dt[i].total,
+                'breaks' : dt[i].breaks,
+                'prod' : parseFloat(dt[i].prod_sec),
+                'idle' : parseFloat(dt[i].idle_sec)
+            });
+            ++counter;
+        }
+        
+        // SERIAL CHART
+        chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData;
+        chart.categoryField = "user";
+        chart.startDuration = 1;
+        chart.plotAreaBorderColor = "#DADADA";
+        chart.plotAreaBorderAlpha = 1;
+        chart.marginBottom = 10;
+        // this single line makes the chart a bar chart          
+        chart.rotate = true;
+
+        // AXES
+        // Category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.gridPosition = "start";
+        categoryAxis.gridAlpha = 0.1;
+        categoryAxis.axisAlpha = 0;
+
+        // Value
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.axisAlpha = 0;
+        valueAxis.gridAlpha = 0.1;
+        valueAxis.position = "top";
+        valueAxis.tickLength = 0;
+        chart.addValueAxis(valueAxis);
+
+        // GRAPHS
+
+        // first graph
+        var graph1 = new AmCharts.AmGraph();
+        graph1.type = "column";
+        graph1.title = "Timp pornit ";
+        graph1.valueField = "total";
+        graph1.balloonText = "Timp pornit: [[value]] h";
+        graph1.lineAlpha = 0;
+        graph1.fillColors = "#ADD981";
+        graph1.fillAlphas = 1;
+        chart.addGraph(graph1);
+
+        // second graph
+        var graph2 = new AmCharts.AmGraph();
+        graph2.type = "column";
+        graph2.title = "Pauze Legale ";
+        graph2.valueField = "breaks";
+        graph2.balloonText = "Pauze Legale: [[value]] h";
+        graph2.lineAlpha = 0;
+        graph2.fillColors = "#81acd9";
+        graph2.fillAlphas = 1;
+        chart.addGraph(graph2);
+
+        // first graph
+        var graph3 = new AmCharts.AmGraph();
+        graph3.type = "column";
+        graph3.title = "Ore productive";
+        graph3.valueField = "prod";
+        graph3.balloonText = "Ore productive: [[value]] h";
+        graph3.lineAlpha = 0;
+        graph3.fillColors = "#44ad23";
+        graph3.fillAlphas = 1;
+        chart.addGraph(graph3);
+
+        // second graph
+        var graph4 = new AmCharts.AmGraph();
+        graph4.type = "column";
+        graph4.title = "Ore neproductive";
+        graph4.valueField = "idle";
+        graph4.balloonText = "Ore neproductive: [[value]] h";
+        graph4.lineAlpha = 0;
+        graph4.fillColors = "#61b7d9";
+        graph4.fillAlphas = 1;
+        chart.addGraph(graph4);
+
+        // LEGEND
+        var legend = new AmCharts.AmLegend();
+        chart.addLegend(legend);
+
+        $('#tableChartDraw').show();
+        $('#responseDataTableChart').height(150 * counter);
+        chart.write("responseDataTableChart");
+    };
+    
+    var exportCurrent = function(type) {
+        var myFilters = getTimesSelectedFilters();
+        myFilters['users'] = parseUserSelectors();
+        var component = 'usage'
+        var action = 'top';
+        exportReport(action, myFilters, type, component);
+    };
+
+</script>

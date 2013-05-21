@@ -1,0 +1,329 @@
+/**
+ * CSS file for AON
+ *
+ * Made by:     Thomas Bredenbeek
+ * Modified by: -
+ * Copyright:   MaxWebresults 2011
+ *
+*/
+
+body    {
+    background-color:#fff;
+    margin:0;
+    padding:0;
+    color: #444444;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+}
+
+h1  {
+ color: #739ABC;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+h2  {
+    color: #888888;
+    font-size: 1.3em;
+    font-weight: normal;
+    margin: 0px 0 10px 0px;
+    padding: 0;
+
+}
+
+h3  {
+    font-size: 17px;
+    color: #c10079;
+    /* Avenir Black */
+    font-weight:800;
+    font-size:25.46px; 
+
+}
+
+#layoutFooter a, #layoutFooter a:visited {
+    color: #6C777D;
+}
+a, a:visited, a:hover {
+    color: #5988B1;
+    text-decoration: none;
+}
+.clear{
+    clear:both;
+}
+#layoutContainer    {
+    margin: 0 auto;
+    width: 850px;
+
+}
+
+
+
+#layoutContent  {
+    height:auto;
+    width:850px;
+    float:left;
+    padding-top:10px;
+
+}
+#layoutHeader   {
+    width: 850px;
+    float:left;
+
+}
+
+#layoutFooter   {
+    clear: both;
+    color: #6C777D;
+    float: left;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 30px;
+    padding-bottom: 20px;
+    position: relative;
+    text-align: center;
+    width: 850px;
+    z-index: 1;
+}
+
+#headerLogo{
+    float:left;
+    height:51px;
+    width:95px;
+    background-image: url(../img/aonLogo.gif);
+}
+
+#headerLogoContainer{
+    margin: 6px 0;
+    position: relative;
+    width: 100%;
+    z-index: 100;
+    height:70px;
+    float:left;
+}
+#headerCountry{
+    color: #7F7F7F;
+    bottom: 4px;
+    position: absolute;
+    right: 0;
+    width:80px;
+    height:11px;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-image:url(../img/dutchflag.gif);
+}
+#headerBanner{
+    margin-top:32px;
+    width:850px;
+    height:265px;
+    float:left;
+    background-image:url(../img/banner/defaultBanner.jpg);
+}
+#headerTopLinks {
+    float: right;
+    width: 850px;
+
+}
+
+#headerTopLinks a {
+    color: #4C4C4C;
+    font-weight: bold;
+}
+#headerTopLinks ul {
+    float: right;
+    margin-top: 3px;
+}
+#headerTopLinks li {
+    background: url("../img/sm_arrow.gif") no-repeat scroll 2px 4px transparent;
+    color: #4C4C4C;
+    float: left;
+    font-size: 1.1em;
+    margin-left: 10px;
+    padding-left: 12px;
+}
+ul, li {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+
+
+
+
+
+
+#headerMenu {
+    float: left;
+    height: 36px;
+    width: 850px;
+}
+
+
+.menuItem {
+
+    padding: 10px 50px 0px 0px;
+    float:left;
+    cursor:pointer;
+}
+.menuItem a{
+    color: #4C4C4C;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 1.1em;
+    font-weight: bold;
+    line-height: 1.2em;
+}
+.menuItemActive {
+
+    padding: 10px 50px 0px 0px;
+    float:left;
+    cursor:pointer;
+}
+.menuItemActive a{
+    color: #4C4C4C;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 1.1em;
+    font-weight: bold;
+    line-height: 1.2em;
+}
+
+
+
+
+
+/* START CONTENT CSS */
+
+#contentLeft{
+    width:250px;
+    float:left;
+    padding-right:10px;
+
+    height:480px;
+}
+#contentRight{
+    padding-left:10px;
+    width:580px;
+    float:left;
+}
+.faqanswer{
+    padding-left:10px;
+}
+
+/* END CONTENT CSS */
+
+
+/* START STYLE for siteOffers Module */
+.siteOffersModule_offerImage{
+	float: left;
+	margin-top: 5px;
+        margin-right: 15px;
+	margin-bottom:5px;
+}
+
+.siteOffersModule_offerBox {
+    display: inline;
+    float: left;
+    margin-right: 18px;
+    width: 270px;
+}
+
+.siteOffersModule_offerText {
+    float: right;
+    margin-right: 21px;
+    margin-top: 0;
+    width: 104px;
+}
+
+.siteOffersModule_offerTitle {
+    font-size: 11px;
+    font-weight: bold;
+    height: 72px;
+    overflow: hidden;
+}
+/* END STYLE for siteOffers Module */
+
+/* START STYLE for contactForm Module */
+.contactFormModule_errors{
+    color:#E11B22;
+    padding:10px;
+    border:2px solid #E11B22;
+    width:556px;
+    display:none;
+}
+.contactFormModule_succes{
+    color:#7AB800;
+    padding:10px;
+    border:2px solid #7AB800;
+    width:556px;
+}
+#contactFormsModule_errorFields{
+    padding-left:10px;
+}
+/* END STYLE for contactForm Module */
+
+
+/* START STYLE for googleMap Module */
+.googleMapModule_searchContainer{
+    width:395px;
+    height:26px;
+    background-color:#474226;
+    float:left;
+}
+.googleMapModule_routeDescription{
+    display:none;
+}
+.googleMapModule_searchContainer{
+    display:none;
+}
+#googleMapModule_map{
+    width:395px;
+    height:200px;
+    background-image:url('../img/mapLoader.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#navigateMap {
+    background-image: url("../img/green_arrow.png");
+    background-repeat: no-repeat;
+    float: left;
+    height: 16px;
+    margin-left: 5px;
+    margin-top: 5px;
+    width: 17px;
+    color: #000;
+}
+
+span.route_from, span.route_to {
+    color: #FFFFFF;
+    margin-top: 7px;
+}
+
+span.route_from {
+    float: left;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+span.route_to {
+    margin-left: 6px;
+    float:left;
+}
+
+input#route_from {
+    float: left;
+    height: 12px;
+    margin-top: 4px;
+    width: 152px;
+}
+
+.googleMapModule_container .contentDarkButton {
+    float:right;
+    margin-top:9px;
+}
+
+
+
+/* END STYLE for googleMap Module */

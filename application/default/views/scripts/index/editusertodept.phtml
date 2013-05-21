@@ -1,0 +1,15 @@
+<div id="contentLeft">
+<script>
+	function goBack()
+	{
+		window.location='<?php echo $this->baseUrl('index/usertodepartments') ?>';
+}
+</script>
+<h2> Editare Angajat <button style="margin-left:10px;" onClick="goBack()"> Renunta</h2>
+<hr/>
+
+<?php
+	echo $this->form;
+ ?>
+
+</div>

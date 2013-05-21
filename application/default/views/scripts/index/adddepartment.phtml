@@ -1,0 +1,18 @@
+<div id="contentLeft">
+<script>	
+	function goBack()
+	{
+		window.location='<?php echo $this->baseUrl('index/departments') ?>';
+	}	
+	
+</script>	
+	<div class="sct box" >
+ 	 <h2>Adauga Departament <button style="margin-left:10px;" onClick="goBack()"> Renunta </button>  </h2>
+ 	 <hr/>
+ 	 
+ 	 <?php
+	echo $this->form;
+	
+ ?>
+ </div>
+</div>

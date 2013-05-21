@@ -1,0 +1,49 @@
+/**
+ * CSS file for HOTEL FINN
+ * PRINTER
+ *
+ * Made by:     Thomas Bredenbeek, Sara Gerion
+ * Modified by: -
+ * Copyright:   MaxWebresults 2011
+ *
+*/
+
+* {
+    font-family: Arial, sans-serif !important;
+    color: #000 !important;
+}
+
+.menuItem, #headerLanguages, #footerFullscreen, #footerSound {
+    display:none; 
+}
+
+.contentLeft, .contentRight, .contentLeft div, .contentRight div  {
+    width: 100% !important;
+    margin: 0 !important;
+    float: none !important;
+}
+
+.contentLeft div, .contentRight div {
+    border-bottom:none !important;
+    height:100% !important;
+    overflow:visible !important;
+} 
+
+#whiteContent h1 {
+    font-size: 15px !important;
+}
+
+#whiteContent {
+    font-size:13px !important;
+}
+
+
+#footerContact {
+    font-size:12px;
+}
+
+.menuItemActive {
+    font-weight:bold;
+    font-size:20px;
+    
+}

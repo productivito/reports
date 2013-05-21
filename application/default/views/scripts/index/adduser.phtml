@@ -1,0 +1,145 @@
+<?php
+$usersToDepartments = $this->usersToDepartments;
+$departments = $this->departments;
+$status = array();
+$statusUser = array();
+
+function hasChilds($parent,$departments)
+{
+	
+	foreach($departments as $department)
+	{
+		if($department['id'] == $parent)
+			return 1;
+	}
+	return 0;
+}
+
+function printUsersWithDept($department,$usersToDepartments)
+{
+	global $statusUser;
+	$statusUser[$department] = "1";
+	//print_r($usersMonitorized);die();
+	foreach($usersToDepartments as $user)
+	{
+		//echo $department;echo "</br>";
+		//echo $user['id']." => ";print_r($usersMonitorized);echo "</br>";
+		//echo $user['id']." ";
+		if($user['department'] == $department){
+			$first_name = '';
+			$last_name = '';
+			if( !empty($user['last_name']) )
+			{
+				$last_name = $user['last_name'];
+			}
+			if( !empty($user['first_name']) )
+			{
+				$first_name = $user['first_name'];
+			}
+			
+			if( $first_name != '' || $last_name != '' )
+				echo "<li><span class'file'>".$user['name'].' ( '.$last_name.' '.$first_name.' )'."</span></li>";
+			else				
+				echo "<li><span class'file'>".$user['name']."</span></li>";
+		}
+	}
+}
+
+function printDepartment($parent,$departments,$usersToDepartments)
+{
+	global $status,$statusUser;
+	//echo "<pre>";print_r($departmentsMonitorized);echo "</pre>";die();
+	$gasit = 0;
+	foreach($departments as $department)
+	{
+		
+		//if(!empty($departmentsMonitorized[$parent])){
+		if($department['parent'] == $parent && empty($status[$department['id']]))
+		{
+			$gasit = 1;
+
+			if(empty($statusUser[$department['parent']]))
+				printUsersWithDept($department['parent'],$usersToDepartments);
+				
+			if(hasChilds($department['id'],$departments))
+			{
+				echo "<li>";
+				echo "<span class='folder'>".$department['name']."</span><ul>";
+				//printUsersWithDept($department['id'],$usersToDepartments);
+				$status[$department['id']] = "1";
+				printDepartment($department['id'],$departments,$usersToDepartments);
+				echo "";
+			}
+			else
+			{
+				echo "<li><span class='folder'>".$department['name']."</span></li>";
+				//printUsersWithDept($department['id'],$usersToDepartments);
+				$status[$department['id']] = "1";
+				
+			}
+			echo "</li></ul>";			
+		}
+		
+	}
+
+	if($gasit == 0)
+	{
+		printUsersWithDept($parent, $usersToDepartments);
+	}	
+}
+
+ function startTree($parent,$departments,$usersToDepartments,$status)
+ {
+ 	global $status;
+ 	foreach($departments as $department)
+	{
+		if(empty($status[$department['id']]))
+		{
+			printDepartment($department['id'],$departments,$usersToDepartments);
+			//printUsersWithDept($department['id'],$usersToDepartments);
+			//$status[$department['id']] = $department['id'];
+		}
+	}
+ }
+ 
+ ?>
+<?php foreach ($this->departments as $department)
+			if( $department['parent'] == 0 )
+				$root = $department['name'];
+	//printDepartment("1",$departments,$usersToDepartments);die();
+	//startTree("0",$departments,$usersToDepartments,$status);die();
+ ?>
+
+<div id="contentLeft">
+<script>
+	function goBack()
+	{
+		window.location='<?php echo $this->baseUrl('index/accessaccounts') ?>';
+	}
+</script>
+	<div class="sct" style="padding:10px 50px 10px 10px;float:left;">
+		<h2> Adaugare Utilizator <button style="margin-left:10px;" onClick="goBack()"> Renunta </button> </h2>
+		<hr/>
+		<div id="left" style="display:inline;float:left; width:480px;" >
+			<button style="margin-left:0px;" onclick="checkAll();">Selecteaza tot</button>
+			<button style="margin-left:10px;" onclick="uncheckAll();">Deselecteaza tot</button>
+			<br /><br />
+			<?php
+				echo $this->form;
+			 ?>
+				
+		</div>
+	
+		<div id="right" style="display:inline;float:right;margin-left:47px;" >
+			<h3>Organigrama</h3><hr/>
+			<ul id="organigrama" class="filetree">
+				<li>
+					<span class="folder"><?php echo $root; ?></span>
+					<ul>
+						<?php startTree("0",$departments,$usersToDepartments,$status); ?>
+					</ul>
+				</li>
+			</ul>		
+		</div>
+	</div>
+</div>

@@ -1,0 +1,20 @@
+<div id="contentLeft">
+<script>	
+	function goBack()
+	{
+		window.location='<?php echo $this->baseUrl('index/rolemanagement') ?>';
+	}	
+	
+</script>	
+<div class="sct" style="padding:10px;">
+	<h2> Adaugare Rol <button style="margin-left:10px;" onClick="goBack()"> Renunta </button> </h2>
+	<hr/>
+	<button style="margin-left:10px;" onclick="checkAll();">Selecteaza tot</button>
+	<button style="margin-left:10px;" onclick="uncheckAll();">Deselecteaza tot</button>
+	<?php
+		
+		echo $this->form;
+		
+	 ?>
+</div>
+</div>

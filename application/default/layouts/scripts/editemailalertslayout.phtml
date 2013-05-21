@@ -1,0 +1,519 @@
+<!--
+  developed by RoyalBit
+-->
+
+<?php
+	list($read,$add,$modify,$delete) = explode(",",$this->rights,10);
+	
+	if($modify != "m")
+		header('Location:'.$this->baseUrl('index/index'));
+?>
+
+
+<?php
+$usersToDepartments = $this->usersToDepartments;
+$departments = $this->departments;
+//echo "<pre>"; print_r($this->usersToDepartments);echo "</pre>";
+//echo "<pre>"; print_r($this->departments);echo "</pre>";die();
+$status = array();
+$statusUser = array();
+$usersMonitorized = $this->usersMonitorized;
+$departmentsMonitorized = $this->deptBanned;
+$email = $this->email;
+$time = array();
+if($email['alert_type'] == 'hourly_deviation')
+{
+	$time = explode("/", $email['time_deviation']);
+}
+
+
+$usersMod = explode("/",$email['users']);
+
+
+$departmentsMod = explode("/",$email['departments']);
+
+function hasChildsDepartments($parent,$departments)
+{	
+	
+	foreach($departments as $department)
+	{
+		if($department['id'] == $parent)
+			return 1;
+	}
+	return 0;
+}
+
+function printUsersWithDept($department,$usersToDepartments,$usersMonitorized)
+{
+	global $statusUser;
+	$statusUser[$department] = "1";
+	foreach($usersToDepartments as $user)
+	{
+		//echo $department;echo "</br>";
+		// print_r($user);die();
+		
+		if($user['department'] == $department)
+			if (in_array($user['id'], $usersMonitorized)){
+				echo "<li class=\"organigramaUser\" id=\"{$user['name']}\">
+					  <span class'file'>
+	                            <input class=\"userselector\" type=\"checkbox\" name='user{$user['id']}' value='{$user['id']}' id=\"".$user['name']."\">{$user['name']}
+	                   </span></li>";
+	     }
+	}
+}
+
+function printDepartment($parent,$departments,$usersToDepartments,$usersMonitorized,$departmentsMonitorized)
+{
+	global $status,$statusUser;
+	$gasit = 0;
+	foreach($departments as $department)
+	{
+
+		if($department['parent'] == $parent && empty($status[$department['id']]))
+		{
+			$gasit = 1;
+			if(empty($departmentsMonitorized[$department['parent']]))
+			{			
+				if(empty($statusUser[$department['parent']]))
+					printUsersWithDept($department['parent'],$usersToDepartments,$usersMonitorized);
+			}
+			if(empty($departmentsMonitorized[$department['id']])){			
+				if(hasChildsDepartments($department['id'],$departments))
+				{
+					echo "<li>";
+					echo "<span class='folder'>".$department['name'].
+	                                    "<input class=\"deptselector\" name='department{$department['id']}' value='{$department['id']}' type=\"checkbox\" id=\"".$department['id']."\"/></span><ul>";
+					//printUsersWithDept($department['id'],$usersToDepartments);
+					$status[$department['id']] = "1";
+					printDepartment($department['id'],$departments,$usersToDepartments,$usersMonitorized,$departmentsMonitorized);
+					echo "";
+				}
+				else
+				{
+					echo "<li><span class='folder'>".$department['name']."
+	                                    <input class=\"deptselector\" type=\"checkbox\" id=\"".$department['name']."\"/></span></li>";
+					//printUsersWithDept($department['id'],$usersToDepartments);
+					$status[$department['id']] = "1";
+					
+				}
+				echo "</li></ul>";
+			}
+		}
+		
+	}	
+
+	if($gasit == 0)
+	{
+		printUsersWithDept($parent, $usersToDepartments,$usersMonitorized);
+	}
+}
+
+ function startTree($parent,$departments,$usersToDepartments,$status,$usersMonitorized,$departmentsMonitorized)
+ {
+ 	global $status;
+ 	foreach($departments as $department)
+	{
+		if(empty($status[$department['id']]))
+		{
+			printDepartment($department['id'],$departments,$usersToDepartments,$usersMonitorized,$departmentsMonitorized);
+			//printUsersWithDept($department['id'],$usersToDepartments);
+			//$status[$department['id']] = $department['id'];
+		}
+	}
+	
+ }
+ 
+ ?>
+ 
+ 
+<?php echo $this->doctype(); ?>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Productivo Admin Panel</title>
+		<link rel="shortcut icon" href="<?php echo $this->baseUrl('img/productivo_icon_tiny.jpg')?>">
+        <!-- START Load CSS/JScript -->
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/admin.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/reset.css')); ?>
+		<?php $this->headLink()->prependStylesheet($this->baseUrl('css/tipTip.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/jquery.treeview.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/components.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/datatables/jquery.dataTables.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/components.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/smoothness/jquery-ui-1.8.18.custom.css')); ?>
+        <?php echo $this->cssHelper() ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/amcharts.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.tipTip.minified.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/lib/jquery.cookie.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.treeview.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/raphael.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/elycharts.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/divButton.js')); ?>
+        <?php //$this->headScript()->prependFile($this->baseUrl('js/default/objects/siteOffers.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/contactForm.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/googleMap.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/cufonNow.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('fonts/Helvetica_400-Helvetica_400.font.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/cufon.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.timepicker.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.dataTables.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery-ui-1.8.14.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery-1.6.2.js')); ?>        
+        <?php $this->javascriptHelper() ?>
+        <?php echo $this->headScript() ?>
+        <!--[if gte IE 9]>
+        <script type="text/javascript">
+        Cufon.set('engine', 'canvas');
+        </script>
+        <![endif]-->
+        <!-- END Load CSS/JScript -->
+        <script type="text/javascript">
+           $(document).ready(function(){
+				$("#organigrama").treeview({
+					animated:"normal",
+					persist: "cookie"
+				});
+				for(var i=1; i<=13; i++)
+					$("#d" + i).tipTip({delay:0});
+				if ( $.browser.msie ){
+					$("#logo").css('padding-top','0px');
+					$("#logo").css('margin-top','31px');
+					$("#main_menu").css('padding-left','15px');
+					$("#user_access").css('padding-right','15px');
+					$("#user_access").css('margin-top','8px');
+					$(".help_links").css('width','230px');
+				}
+				$('#<?php echo $email['alert_type']; ?>').attr('checked','checked');
+				
+				<?php for($i=0;$i<=count($usersMod)-1;$i++) { ?>
+					$('input[value="<?php echo $usersMod[$i]; ?>"]').attr('checked','checked');
+				<?php }?>
+
+				<?php for($i=0;$i<=count($departmentsMod)-1;$i++) { ?>
+					$('input[value="<?php echo $departmentsMod[$i]; ?>"]').attr('checked','checked');
+				<?php }?>
+				
+			});
+        </script>
+
+	<?php //echo "<pre>"; print_r($this->usersToDepartments);die();echo "</pre>"; ?>
+	<?php foreach ($this->departments as $department)
+				if( $department['parent'] == 0 )
+					$root = $department['name'];
+		//printDepartment("1",$departments,$usersToDepartments);die();
+		//startTree("0",$departments,$usersToDepartments,$status);die();
+	 ?>
+ 
+ <script type="text/javascript">
+ 
+ 	$(function() {
+ 		
+ 		$(".step1radio").change(function() {
+ 			
+			var option = "";
+		    
+		    if ($('#hourly_deviation').is(':checked'))
+		    	option = $('#hourly_deviation').val();
+		    else if($('#inactivity').is(':checked'))
+		   		option = $('#inactivity').val();
+		   	else if($('#unproductive').is(':checked'))
+		   		option = $('#unproductive').val();
+		   		
+		   // alert(option);
+		   
+		   $("#step3option1").hide();
+		   $("#step3option2").hide();
+		   $("#step3option3").hide();
+		   
+		   if (option == "hourly_deviation")
+		   		$("#step3option1").show();
+		   else if (option == "inactivity")
+		   		$("#step3option2").show();
+		   else if (option == "unproductive")
+		   		$("#step3option3").show();
+		   		
+		});
+
+	    $('.timepicker').timepicker({
+	        timeFormat: 'hh:mm:ss',
+	        showSecond: true
+	    });				
+	});	
+ </script>	 
+	 
+    </head>
+    <body rel="<?php echo $this->baseUrl('public/../'); ?>">
+        <!--[if !IE]>start wrapper<![endif]-->
+	<div id="wrapper">
+		<!--[if !IE]>start head<![endif]-->
+		<div id="head">
+			<div id="banda_head">
+				<div id="logo"></div>
+				
+				<!--[if !IE]>start menus_wrapper<![endif]-->
+				
+				<div id="menus_wrapper">
+					<ul id="main_menu">
+						<li><a href="<?php echo $this->baseUrl('/index/rapoarte'); ?>" ><img id="rapoarte" src="<?php echo $this->baseUrl('img/rapoarte_active.png'); ?>" /></a></li>
+						<li><a href="<?php echo $this->baseUrl('/index/home'); ?>" onmouseover="changeSrc('<?php echo $this->baseUrl('img/administrare_over.png'); ?>', 'administrare')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/administrare.png'); ?>', 'administrare')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/administrare_down.png'); ?>', 'administrare')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/administrare.png'); ?>', 'administrare')" ><img id="administrare" src="<?php echo $this->baseUrl('img/administrare.png'); ?>" /></a></li>
+						<li><a href="#" onmouseover="changeSrc('<?php echo $this->baseUrl('img/ajutor_over.png'); ?>', 'ajutor')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/ajutor.png'); ?>', 'ajutor')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/ajutor_down.png'); ?>', 'ajutor')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/ajutor.png'); ?>', 'ajutor')" ><img id="ajutor" src="<?php echo $this->baseUrl('img/ajutor.png'); ?>" /></a></li>
+					</ul>
+					<ul id="user_access">
+						<a href="<?php echo $this->baseUrl('index/changepassword') ?>"><li>Change Password |</li></a>
+						<a href="<?php echo $this->baseUrl('index/logout') ?>"><li class="last">Log out</li></a>
+					</ul>
+				</div>
+				
+				
+				<!--[if !IE]>end menus_wrapper<![endif]-->
+			</div>
+		</div>
+		<!--[if !IE]>end head<![endif]-->
+		
+		<!--[if !IE]>start content<![endif]-->
+        <!-- START Content -->
+		
+		<div id="content">
+			<div id="banda_rosie">
+				<ul id="left_reports">
+					<?php foreach($this->reportMonitor as $item){ ?>
+						<li><a onmouseover="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '_over.png'; ?>','<?php echo $item['class']; ?>')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '.png'; ?>','<?php echo $item['class']; ?>')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '_active.png'; ?>','<?php echo $item['class']; ?>')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '.png'; ?>','<?php echo $item['class']; ?>')" href="<?php echo $this->baseUrl('index/'.$item['page']); ?>" ><img title="<?php echo $item['full_name']; ?>" id="<?php echo $item['class']; ?>" src="<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '.png'; ?>" /></a></li>
+					<?php } ?>	
+				</ul>
+				<ul id="right_reports">
+					<?php foreach($this->reportActivity as $item){ ?>
+						<li><a onmouseover="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '_over.png'; ?>','<?php echo $item['class']; ?>')" onmouseout="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '.png'; ?>','<?php echo $item['class']; ?>')" onmousedown="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '_active.png'; ?>','<?php echo $item['class']; ?>')" onmouseup="changeSrc('<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '.png'; ?>','<?php echo $item['class']; ?>')" href="<?php echo $this->baseUrl('index/'.$item['page']); ?>" ><img title="<?php echo $item['full_name']; ?>" id="<?php echo $item['class']; ?>" src="<?php echo $this->baseUrl('img/dasboard_icons/') . $item['class'] . '.png'; ?>" /></a></li>
+					<?php } ?>
+				</ul>
+			</div>
+					
+			<!--[if !IE]>start section<![endif]-->	
+		<div id="content_wrapper">
+			<form action="<?php echo $this->baseUrl('index/parseeditalertreportmail/id/'.$email['id']); ?>" id="emailalerts" method="post">		
+				<!--[if !IE]>start section<![endif]-->	
+				<div class="section_o" style="width:16%">
+					<!--[if !IE]>start title wrapper<![endif]-->
+					<div class="title_wrapper">
+						<h2>Pasul 1 - Tip alerta</h2>
+					</div>
+					<!--[if !IE]>end title wrapper<![endif]-->
+					<!--[if !IE]>start section content<![endif]-->
+					<div class="section">
+						<!--[if !IE]>start section content top<![endif]-->
+						<div class="sct">
+
+							<div id="step1">
+								 <input type="radio" class="step1radio" id="hourly_deviation" name="alerttype" value="hourly_deviation" checked="checked" />
+		                        <label for="hourly_deviation">Abatere orara</label><br/>
+		                        <input type="radio" class="step1radio" id="inactivity" name="alerttype" value="inactivity" />
+		                        <label for="inactivity">Inactivitate</label><br/>
+		                        <input type="radio" class="step1radio" id="unproductive" name="alerttype" value="unproductive" />
+		                        <label for="unproductive">Neproductivitate</label><br/>											
+							</div>									
+										
+						</div>
+						<!--[if !IE]>end section content top<![endif]-->
+						
+					</div>
+					<!--[if !IE]>end section content<![endif]-->
+	                                <!-- div id="orgSelectedContainer" style="display:none;text-align:center;">
+	                                    Utilizator selectat:<br/>
+	                                    <span id="orgSelectedUser" style="font-weight:bold;"></span><br/><br/>
+	                                    <input type="button" value="Sterge filtrul" id="orgSelectedClear" />
+	                                </div -->
+				</div>	
+						
+				<!--[if !IE]>start section<![endif]-->	
+				<div class="section_o" style="width:24%;">
+					<!--[if !IE]>start title wrapper<![endif]-->
+					<div class="title_wrapper">
+						<h2>Pasul 2 -Departamente / Utilizatori</h2>
+					</div>
+					<!--[if !IE]>end title wrapper<![endif]-->
+					<!--[if !IE]>start section content<![endif]-->
+					<div class="section">
+						<!--[if !IE]>start section content top<![endif]-->
+						<div class="sct">
+							<ul id="organigrama" class="filetree" style="vertical-align:text-bottom;height: 400px;overflow: scroll;">
+								<li>
+									<span class="folder"><?php echo $root; ?></span>
+									<ul>
+										<?php startTree("0",$departments,$usersToDepartments,$status,$usersMonitorized,$departmentsMonitorized); ?>
+									</ul>
+								</li>
+							</ul>
+
+						</div>
+						<!--[if !IE]>end section content top<![endif]-->
+
+					</div>
+					<!--[if !IE]>end section content<![endif]-->
+	                                <!-- div id="orgSelectedContainer" style="display:none;text-align:center;">
+	                                    Utilizator selectat:<br/>
+	                                    <span id="orgSelectedUser" style="font-weight:bold;"></span><br/><br/>
+	                                    <input type="button" value="Sterge filtrul" id="orgSelectedClear" />
+	                                </div -->
+				</div>	
+			<!--[if !IE]>start section<![endif]-->	
+				<div class="section_t" style="width:27%" >
+			
+					<!--[if !IE]>start title wrapper<![endif]-->
+					<div class="title_wrapper">
+						<h2>Pasul 3 - Timp abatere</h2>
+					</div>
+					<!--[if !IE]>end title wrapper<![endif]-->
+					<!--[if !IE]>start section content<![endif]-->
+					<div class="section">
+					<!--[if !IE]>start section content top<![endif]-->
+						<div class="sct">
+
+							<div id="step3" style="padding:10px;">
+								
+								<div id="step3option1"  <?php if($email['alert_type'] != 'hourly_deviation'){ ?> style="display:none" <?php } ?> > 
+									<div id="step3o1s1" style="width:300px;border: 1px black solid;padding:10px;margin-bottom:20px;" >
+										Se considera abatare depasirea cu mai mult de  <input type="text" class="timepicker" size="8" id="timepassingdeviation" name="timepassingdeviation" <?php if($email['alert_type'] == 'hourly_deviation'){ ?>  value="<?php echo $time[0]; ?>" <?php } ?> >
+										fata de inceperea a programului.
+									 </div>
+									<div id="step3o1s2" style="width:300px;border: 1px black solid;padding:10px;margin-bottom:20px;"> 
+										Se considera abatere plecarea cu peste <input type="text" class="timepicker" size="8" id="leavingdeviation" name="leavingdeviation" <?php if($email['alert_type'] == 'hourly_deviation'){ ?>  value="<?php echo $time[1]; ?>" <?php } ?> >
+										inainte de ora de terminare a programului.												
+									</div>
+									<div id="step3o1s3" style="width:300px;border: 1px black solid;padding:10px;margin-bottom:20px;"> 
+										Se considera abatere plecarea cu peste<input type="text" class="timepicker" size="8" id="timeoverpassingdeviation" name="timeoverpassingdeviation" <?php if($email['alert_type'] == 'hourly_deviation'){ ?>  value="<?php echo $time[2]; ?>" <?php } ?> >
+										dupa ora de terminare a programului.												
+									</div> 		
+							   </div>
+							   
+							   <div id="step3option2" <?php if($email['alert_type'] != 'inactivity'){ ?> style="display:none" <?php } ?>> 
+									<div id="step3o2s1" style="width:300px;border: 1px black solid;padding:10px;margin-bottom:20px;" >
+										Depasirea cu <input type="text" class="timepicker" size="8" id="inactivitytimedeviation" name="inactivitytimedeviation" <?php if($email['alert_type'] == 'inactivity'){ ?> value="<?php echo $email['time_deviation']; ?>" <?php } ?>   >   
+										a timpului de inactivitate / zi va genera alerta din care se scade pauza definita in programul de lucru.
+									 </div>
+							   </div>
+							   
+							   <div id="step3option3" <?php if($email['alert_type'] != 'unproductive'){ ?> style="display:none" <?php } ?>> 
+									<div id="step3o3s1" style="width:300px;border: 1px black solid;padding:10px;margin-bottom:20px;" >
+										Depasirea cu <input type="text" class="timepicker" size="8" id="unproductivtimedeviation" name="unproductivtimedeviation" <?php if($email['alert_type'] == 'unproductive'){ ?> value="<?php echo $email['time_deviation']; ?>" <?php } ?>>
+										a timpului de neproductivitate / zi va genera alerta.
+									 </div>	
+							    </div>		
+							    								
+							</div>
+
+					
+						<!--[if !IE]>end section content top<![endif]-->
+		
+						</div>
+					<!--[if !IE]>end section content<![endif]-->
+				</div>			
+			</div>
+			<!--[if !IE]>start section<![endif]-->	
+			<div class="section_t" style="width:26%">
+				<!--[if !IE]>start title wrapper<![endif]-->
+				<div class="title_wrapper">
+					<h2>Pasul 4 - Destinatie Alerta</h2>
+				</div>
+				<!--[if !IE]>end title wrapper<![endif]-->
+				<!--[if !IE]>start section content<![endif]-->
+				<div class="section">
+					<!--[if !IE]>start section content top<![endif]-->
+					<div class="sct" style="padding:10px;">
+						Trimite alerta la adresa/adresele de e-mail:
+						<input style="margin-bottom:5px;" type="text" size="35" name="alertdestination1" value="<?php echo $email['destination']; ?>"></br>
+						* Introduceti adresele separate prin virgula
+						<!-- <input type="text" size="35" name="alertdestination2"> -->
+									
+					</div>
+					<!--[if !IE]>end section content top<![endif]-->
+					
+				</div>
+				<!--[if !IE]>end section content<![endif]-->
+			</div>
+			<!--[if !IE]>start section<![endif]-->	
+			<div class="section_t" style="width:26%">
+				<!--[if !IE]>start title wrapper<![endif]-->
+				<div class="title_wrapper">
+					<h2>Pasul 5 - Salvare Alerta</h2>
+				</div>
+				<!--[if !IE]>end title wrapper<![endif]-->
+				<!--[if !IE]>start section content<![endif]-->
+				<div class="section">
+					<!--[if !IE]>start section content top<![endif]-->
+					<div class="sct" style="padding:10px;">
+						<p>Salveaza alerta sub denumirea :</p>
+						<input style="margin-bottom:10px;" type="text" size="35" name="alertname" value="<?php echo $email['name']; ?>"></br>
+						<input type = "submit" value="Salveaza">
+								
+					</div>
+					<!--[if !IE]>end section content top<![endif]-->
+				
+					
+				</div>
+				<!--[if !IE]>end section content<![endif]-->
+			</div>			
+			
+			</form>	
+
+		</div>
+		
+	</div>
+	<!--[if !IE]>end wrapper<![endif]-->
+	
+	<!--[if !IE]>start footer<![endif]-->
+	<div id="footer">
+		<div id="footer_inner">
+		
+		<dl class="copy">
+			<dt><strong>Productivo Admin</strong></dt>
+			<dd>&copy; 2012 Productivo.ro  All rights reserved.</dd>
+		</dl>
+		
+		<dl class="quick_links">
+			<dt><strong>Quick Links :</strong></dt>
+			<dd>
+				<ul>
+					<li><a href="#">Administrare </a></li>
+					<li><a href="#">Rapoarte</a></li>
+					<li><a href="#">Ajutor</a></li>
+					<li class="last"><a href="#">Log out</a></li>
+				</ul>
+			</dd>
+		</dl>
+		
+		
+		<dl class="help_links">
+			<dt><strong>Ai nevoie de ajutor?</strong></dt>
+			<dd>
+				<ul>
+					<li><a href="#">FAQ</a></li>
+					<li class="last"><a href="#">Contact</a></li>
+				</ul>
+			</dd>
+		</dl>
+	
+		</div>
+	</div>
+	<!--[if !IE]>end footer<![endif]-->	
+	<script type="text/javascript">
+	function changeSrc(path,id)
+	{
+		document.getElementById(id).src = path;
+	}
+    $(document).ready(function() {
+        
+        $(".deptselector").click(function(e) {
+            e.stopImmediatePropagation();
+            $(this).closest($('li')).find('input:checkbox').attr('checked', this.checked);
+            // parseUserSelectors();
+        });
+    });
+	</script>
+</body>
+</html>
+<script type="text/javascript">
+    /* $(function() {
+        $( "#start_date" ).datepicker();
+        $( "#end_date" ).datepicker();
+    }); */
+</script>
+

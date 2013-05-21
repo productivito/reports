@@ -1,0 +1,320 @@
+<form style="display:none;" id="exportDocumentForum" action="#" method="POST" target="_blank">
+    <input type="hidden" name="filters" id="exportDocumentFilters" value="" />
+    <input type="hidden" name="dataset" id="exportDocumentAction" value="" />
+    <input type="hidden" name="doctype" id="exportDocumentType" value="" />
+    <input type="hidden" name="component" id="exportDocumentComponent" value="" />
+</form>
+<script>
+    var exportReport = function(action, filters, type, component) {
+        if (typeof(action) === 'undefined') {
+            alert("Actiune nedefinita in functia de export");
+            return;
+        }
+        if (typeof(filters) === 'undefined') {
+            alert("Filtre nedefinite in functia de export");
+            return;
+        }
+        if (typeof(type) === 'undefined') {
+            alert("Format de document necunoscut in functia de export");
+            return;
+        }
+        switch(type) {
+            case 'pdf':
+            case 'csv':
+                $('#exportDocumentAction').val(action);
+                $('#exportDocumentFilters').val(JSON.stringify(filters));
+                $('#exportDocumentType').val(type);
+                $('#exportDocumentComponent').val(component);
+                $('#exportDocumentForum').attr('action', '<?=$this->baseUrl('export/') ?>' + type);
+                $('#exportDocumentForum').submit();
+                break;
+            default:
+                alert("Format de document necunoscut in functia de export");
+                return;
+                break;
+        }
+    };
+</script>
+<div id="reportTimeSelector">
+    <div id="time_filter1" style="float:left;margin:10px">
+        <input type="checkbox" class="checkMonthSelector" id="m1" name="month[]" value="01" <?=(date('n') == 1) ? 'checked="checked"' : '' ?> />
+        <label for="m01">Ianuarie</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m2" name="month[]" value="02" <?=(date('n') == 2) ? 'checked="checked"' : '' ?> />
+        <label for="m02">Februarie</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m3" name="month[]" value="03" <?=(date('n') == 3) ? 'checked="checked"' : '' ?> />
+        <label for="m03">Martie</label><br/>	
+        <input type="checkbox" class="checkMonthSelector" id="m4" name="month[]" value="04" <?=(date('n') == 4) ? 'checked="checked"' : '' ?> />
+        <label for="m05">Aprilie</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m5" name="month[]" value="05" <?=(date('n') == 5) ? 'checked="checked"' : '' ?> />
+        <label for="m05">Mai</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m6" name="month[]" value="06" <?=(date('n') == 6) ? 'checked="checked"' : '' ?> />
+        <label for="m06">Iunie</label><br/>	
+        <input type="checkbox" class="checkMonthSelector" id="m7" name="month[]" value="07" <?=(date('n') == 7) ? 'checked="checked"' : '' ?> />
+        <label for="m07">Iulie</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m8" name="month[]" value="08" <?=(date('n') == 8) ? 'checked="checked"' : '' ?> />
+        <label for="m08">August</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m9" name="month[]" value="09" <?=(date('n') == 9) ? 'checked="checked"' : '' ?> />
+        <label for="m09">Septembrie</label><br/>	
+        <input type="checkbox" class="checkMonthSelector" id="m10" name="month[]" value="10" <?=(date('n') == 10) ? 'checked="checked"' : '' ?> />
+        <label for="m10">Octombrie</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m11" name="month[]" value="11" <?=(date('n') == 11) ? 'checked="checked"' : '' ?> />
+        <label for="m11">Noiembrie</label><br/>
+        <input type="checkbox" class="checkMonthSelector" id="m12" name="month[]" value="12" <?=(date('n') == 12) ? 'checked="checked"' : '' ?> />
+        <label for="m12">Decembrie</label><br/>
+    </div>   
+    <div id="time_filter2" style= "float:left;margin-top:14px">
+        <label for="year">Anul</label></br>
+        <input type="text" class="year" id="year" name="year" value="<?php echo date('Y'); ?>" />
+    </div> 
+</div>
+<div id="report">
+    <h2>Raport Performanta Individuala
+        <a href="#" style="float:right">Descrie raport</a></h2>
+    <hr/>
+    <div style="clear:both;display:block">
+        <table border="0">
+            <tr style="vertical-align:top;">
+                <td style="padding:10px;">
+                    <b>Activitate pe calculator</b><br/><br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tHours" />
+                    Total ore pe calculator (Timp activ + Inactiv - Pauze legale)<br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tAHours" />
+                    Total timp activ<br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tIHours" />
+                    Total timp inactiv (Inactiv - pauze legale)<br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tPClose" />
+                    Timp calculator inchis in timpul programului<br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tSuplHours" />
+                    Total ore suplimentare<br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tWeHours" />
+                    Total ore lucrate in week-end (S si D, active si inactive)<br/>
+                    <input type="checkbox" class="checkTime" name="timeRep[]" value="tWeActHours" />
+                    Total ore productive in week-end (S si D)<br/>
+                </td>
+                <td style="padding:10px;" rowspan="2">
+                    <b>Abateri</b><br/><br/>
+                    
+                    <input type="checkbox" class="checkTimeDeviation" name="nhDeviation" value="nhDeviation" />
+                    Numar de abateri orare
+                    <div style="margin:5px 0px 10px 25px;" >
+                        Se considera abatare depasirea cu mai mult de
+                        <input type="text" readonly="true" size="8" id="timepassingdeviation" class="timepicker" name="timepassingdeviation">
+                        (ore:min) fata de inceperea a programului.<br/>
+                        Se considera abatere plecarea cu peste
+                        <input type="text" size="8" readonly="true" id="leavingdeviation" class="timepicker" name="leavingdeviation">
+                        (ore:min) inainte de ora de terminare a programului.												
+                    </div>
+                    
+                    <input type="checkbox" class="checkTimeDeviation" name="nInacDeviation"  value="nInacDeviation" />
+                    Numar abateri de inactivitate
+                    <div style="margin:5px 0px 10px 25px;" >
+                        Depasirea cu
+                        <input type="text" readonly="true" size="8" id="inactivitydeviation" class="timepicker" name="inactivitydeviation">
+                        (ore:min) a timpului de inactivitate / zi - pauze legale.
+                    </div>
+                    
+                    <input type="checkbox" class="checkTimeDeviation" name="nNprodDeviation" class="timepicker" value="nNprodDeviation" />
+                    Numar abateri de neproductivitate
+                    <div style="margin:5px 0px 10px 25px;" >
+                        Depasirea cu
+                        <input type="text" size="8" readonly="true" id="nonproddeviation" class="timepicker" name="nonproddeviation">
+                        (ore:min) a timpului de neproductivitate / zi.
+                    </div>
+                </td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td style="padding:10px;">
+                    <b>Productivitate</b><br/><br/>
+                    <input type="checkbox" class="checkTime" name="prodRep[]" value="roi" />
+                    ROI<br/>
+                    <input type="checkbox" class="checkTime" name="prodRep[]" value="tProd" />
+                    Total timp productiv<br/>
+                    <input type="checkbox" class="checkTime" name="prodRep[]" value="tNProd" />
+                    Total timp neproductiv<br/>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align:center;">
+            <input type="button" id="ajaxTimedFilterAction" value="Genereaza" style="margin: 10px auto;"/>
+        </div>
+
+  </div>
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <div id="container">
+        	<div id="tableContainer"></div>
+		     <div class="export" id="exportApplications">
+		        <hr/>
+		        <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+		        &nbsp;&nbsp;|&nbsp;&nbsp;
+		        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+		    </div>       	
+    </div>  
+</div>
+
+    
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#ajaxTimedFilterAction').click(ajaxCall);
+        
+	    $('.timepicker').timepicker({
+	        timeFormat: 'hh:mm:ss',
+	        showSecond: true
+	    });	        
+        
+    });
+    
+    var ajaxCall = function() {
+
+		var myFilters;
+		myFilters = getFilters();
+    	//console.log(result);
+        //alert('Filters have been set');
+       // return;
+        
+        if (myFilters !== false) {
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/performance'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors()
+                },
+                beforeSend: function() {
+                    $('#tableContainer').empty();
+                    $('#tableTabs').hide();
+                    $('#loader').show();
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data));
+                $('#responseDataTable').dataTable();
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+        }
+    };
+
+	function getFilters()
+	{
+		var filter = [];
+        var months = [];
+        $(".checkMonthSelector:checked").each(function() {
+           	months.push($(this).val());
+        });
+
+        filter.push( { 'months': months } );
+        var deviation_productivity = [];
+
+        $(".checkTime:checked").each(function() {
+        	deviation_productivity.push($(this).val());
+        });		
+
+        filter.push( { 'deviation_productivity': deviation_productivity } );
+
+        if($('input[name=nhDeviation]:checked').val() != undefined )
+        {
+        	var timepassingdeviation = ($('input[id=timepassingdeviation]').val());
+        	var leavingdeviation = ($('input[id=leavingdeviation]').val());
+
+        	if( timepassingdeviation == '' || leavingdeviation == '' )
+        	{	
+            	alert('Completati toate campurile');
+            	return false;
+        	}
+
+        	filter.push( { 'nhDeviation':{'timepassingdeviation': timepassingdeviation, 'leavingdeviation' : leavingdeviation } } );
+        }
+        else
+        	filter.push( { 'nhDeviation':'' } ); 
+
+        if($('input[name=nInacDeviation]:checked').val() != undefined )
+        {
+        	var inactivitydeviation = ($('input[id=inactivitydeviation]').val());
+
+        	if( inactivitydeviation == '' )
+        	{	
+            	alert('Completati toate campurile');
+            	return false;
+        	}
+
+        	filter.push( { 'nInacDeviation':{'inactivitydeviation': inactivitydeviation } } );
+        }  
+        else
+        	filter.push( { 'nInacDeviation':'' } );
+
+        if($('input[name=nNprodDeviation]:checked').val() != undefined )
+        {
+        	var nonproddeviation = ($('input[id=nonproddeviation]').val());
+
+        	if( nonproddeviation == '' )
+        	{	
+            	alert('Completati toate campurile');
+            	return false;
+        	}
+
+        	filter.push( { 'nNprodDeviation':{'nonproddeviation': nonproddeviation } } );
+        }
+        else
+        	filter.push( { 'nNprodDeviation':'' } );
+
+        var year = $('input[id=year]').val();
+
+        var re5digit=/^[0-9]{4}$/ //regular expression defining a 5 digit number
+        if (year.search(re5digit)==-1) //if match failed
+        {
+        	alert("Inserati un an valid");
+        	return false;
+        }
+        
+        filter.push( { 'year': year } );      
+        
+        filter.push( { 'users' : parseUserSelectors() } );
+
+       return filter; 		
+	}
+	
+    var processDocumentsTable = function(data)
+    {
+        var dt = data.data.usage;
+			
+        var output ='<table id="topTablePerformance">';
+        // header
+        output += '<thead ><tr>';
+        output += '<th>Raport de Performanta Individuala privind lucrul pe calculator </th>';
+        output += '<th></th>';
+        output += '</tr></thead><tbody style="text-align:left">';
+        // data
+        for (i in dt) {
+            output += '<tr>';
+            output += '<td>' + dt[i].name + '</td>';
+            output += '<td>' + dt[i].number + '</td>';
+            output += '</tr>';
+        }
+        output += '</tbody></table>';
+        return output;
+    };
+	
+    var exportCurrent = function(type) {
+        var myFilters = getFilters();
+        myFilters['users'] = parseUserSelectors();
+        var component = 'usage';
+        var action = 'performance';
+        exportReport(action, myFilters, type, component);
+    };    
+    
+</script>

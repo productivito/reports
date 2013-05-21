@@ -1,0 +1,65 @@
+<!--
+  developed by RoyalBit
+-->
+
+
+
+<?php echo $this->doctype(); ?>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Productivo v2.0 - Monitorizare Corporate</title>
+		<link rel="shortcut icon" href="<?php echo $this->baseUrl('img/productivo_icon_tiny.jpg')?>">
+        <!-- START Load CSS/JScript -->
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/admin-login.css')); ?>
+        <?php $this->headLink()->prependStylesheet($this->baseUrl('css/jquery.treeview.css')); ?>
+        <?php echo $this->cssHelper() ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/lib/jquery.cookie.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery.treeview.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/raphael.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/elycharts.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/divButton.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/siteOffers.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/contactForm.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/default/objects/googleMap.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/cufonNow.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('fonts/Helvetica_400-Helvetica_400.font.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/cufon.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery-ui-1.8.14.js')); ?>
+        <?php $this->headScript()->prependFile($this->baseUrl('js/jquery-1.6.2.js')); ?>        
+        <?php $this->javascriptHelper() ?>
+        <?php echo $this->headScript() ?>
+        <!--[if gte IE 9]>
+        <script type="text/javascript">
+        Cufon.set('engine', 'canvas');
+        </script>
+        <![endif]-->
+        <!-- END Load CSS/JScript -->
+    </head>
+    <body rel="<?php echo $this->baseUrl('public/../'); ?>">
+        <!--[if !IE]>start wrapper<![endif]-->
+	<div id="wrapper">
+		
+		<!--[if !IE]>start login wrapper<![endif]-->
+		<div id="login_wrapper">
+			
+			
+			<!-- <div class="error">
+				<div class="error_inner">
+					<?php if($log == 0 ){ ?>
+						<strong>Access Denied</strong> | <span>user/password combination wrong</span>
+					<?php } ?>
+				</div>
+			</div> -->
+			
+			
+			 <?php echo $this->layout()->content; ?>
+			<!--[if !IE]>end login<![endif]-->
+		</div>
+		<!--[if !IE]>end login wrapper<![endif]-->
+	</div>
+	<!--[if !IE]>end wrapper<![endif]-->
+	
+</body>
+</html>
+

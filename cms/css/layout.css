@@ -1,0 +1,175 @@
+/*
+ *Main
+ */
+ *{
+ 	padding:0;
+	margin:0;
+	}
+html, body
+{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+} 
+.Close
+{
+	clear: both;
+}
+a img
+{
+	border: none 0;
+}
+div#Wrapper
+{
+	width: 960px !important;
+	margin: 0 auto;
+	position: relative;
+	text-align: left;
+	height: auto !important;
+        top:0;
+}
+	div#MinWidth
+	{
+		position: relative;
+		width: 960px;
+		clear:both;
+	}
+	div#Header
+	{       top:0;
+		position: relative;
+		width: 960px;
+		height:155px;
+		clear:both;
+		overflow: hidden;
+                margin-bottom: 40px
+	}
+        	div#head1
+	{   margin-left: 0;
+            left: 0;
+            top:0;
+            background-image:url('../img/profit_head1.gif');
+            background-repeat:repeat-x;
+            background-position:top; 
+            position: absolute;
+            width: 27%;
+            height:155px;
+
+                    
+	}
+        div#head2
+	{
+
+                background-image: url("../img/profit_head2.gif");
+                background-position: center top;
+                background-repeat: repeat-x;
+                height: 155px;
+                margin-left: 27%;
+                left: 0px;
+                position: absolute;
+                width: 73%;
+                
+                  
+	}
+                
+	#Logo{
+		float:left;
+                margin: 0px;
+                margin-top: 31px;
+		}
+	div#Center
+	{
+		position: relative;
+		width: 100%;
+		text-align: center;
+	}
+        
+        div#Center img
+	{
+		float: left;
+                display: none;
+	}
+	
+	div#LogonWindow  {
+                position: relative;
+                margin: 0 auto;
+                padding-top: 35px;
+                padding-left: 20px;
+                padding-right: 20px;
+                width: 340px;
+                height: 190px;
+                text-align: left;
+                background:#292e6b;
+	}
+	
+        dd  {
+                position: relative;
+                margin-bottom: 10px;
+        }
+                        
+       div#LogonWindow form {           
+                float: left;
+                            
+                        }
+			
+	div#Profile
+	{
+		position: relative;
+		padding: 5px 20px;
+		background-color:#292E6B;
+		float:right;
+	}
+		div#Profile{
+		
+		}
+		body#Logon div#Profile, body#Password div#Profile{
+			display:none;
+		}
+
+		
+		div#info{
+			position: relative;
+			padding: 0 0 0 10px;
+			text-align: left;
+			float: left;
+			width:210px;
+		}
+	div#Content
+	{
+		position: relative;
+		width: 960px;
+		min-height:400px;
+	}
+	#Left{
+		float:left;
+		width:200px;
+	}
+	#Right{
+		border: thin solid #292E6B;
+                float: left;
+                min-height: 300px;
+                padding: 27px;
+                width: 703px;
+	}
+        
+        #logContent pre {
+            white-space: pre-wrap;
+        }
+        #logContent p {
+             border-bottom: 1px dotted;
+    font-size: 15px;
+    margin-top: 45px;
+        }
+        #logContent span {
+
+            float:left;
+            margin-bottom:10px;
+        }
+   #Footer{
+                float: left;
+                margin-bottom: 70px;
+                margin-top: 70px;
+                text-align: center;
+                width: 960px;
+	}
+	
+

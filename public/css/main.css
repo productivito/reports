@@ -1,0 +1,512 @@
+/**
+ * CSS file for Ticketcountdown.nl
+ *
+ * Made by:     Thomas Bredenbeek
+ * Modified by: -
+ * Copyright:   MaxWebresults 2011
+ *
+*/
+
+body    {
+    background-color:#fff;
+    margin:0;
+    padding:0;
+    color: #444444;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    background-image:url('../img/backgroundPattern.jpg');
+    background-position: top;
+    background-repeat: repeat-x;
+}
+
+h1  {
+ color: #739ABC;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+h2  {
+    color: #888888;
+    font-size: 1.3em;
+    font-weight: normal;
+    margin: 0px 0 10px 0px;
+    padding: 0;
+
+}
+
+h3  {
+    font-size: 17px;
+    color: #c10079;
+    /* Avenir Black */
+    font-weight:800;
+    font-size:25.46px; 
+
+}
+
+a, a:visited, a:hover {
+    color: #5988B1;
+    text-decoration: none;
+}
+.clear{
+    clear:both;
+}
+
+
+/* START Menu Items */
+.menuItem{
+    float:left;
+    padding-left:10px;
+}
+.menuItemActive{
+    float:left;
+    padding-left:10px;
+}
+/* END Menu Items */
+
+/* START LAYOUT */
+
+/* END LAYOUT */
+
+#layoutHeader{
+    background-image:url('../img/headerBackground.png');
+    background-repeat:no-repeat;
+    height:346px;
+    width:1105px;
+    position:relative;
+    margin: 0 auto;
+    overflow: hidden;
+}
+    #headerLogo{
+        background-color:red;
+    }
+    #headerBanner{
+        background-color:yellow;
+    }
+    #headerSocial{
+        background-color:green;
+    }
+    
+    #headerTitle {
+    color: #004785;
+    float: left;
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 30px;
+    margin-left: 133px;
+    margin-top: 69px;
+    position: absolute;
+    }
+#layoutContainer    {
+    margin: 0 auto;
+    width: 1007px;
+    top:-165px;
+    position:relative;
+    
+}
+#layoutContent{
+    border-bottom: 1px solid #CECECE;
+    width:1007px;
+    float:left;    
+    
+}
+    #contentLeft{
+        /*width:196px; */
+        width: 100%;
+        height:500px; /*SET to Auto */
+        margin-right:50px;
+        float:left;
+        background-color:#fff;
+    }
+    
+    #contentMiddle{
+        width:515px;
+        margin-right:50px;
+        float:left;
+        background-color:#fff;
+        
+    }
+    
+    .mainContent, #siteOffersModule_offerTextSingle, #contentRight {
+        color: #004785;
+        letter-spacing: 0.2px;
+        line-height: 17px;
+        margin-bottom: 80px;
+    }
+    
+    .mainContent h2, .mainContent p, .mainContent strong, .mainContent form {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+    
+    
+    .mainContent h2 {
+        color: #E51028;
+        font-weight: bold;
+        margin-bottom: 14px;
+    }
+    
+    
+    #contentRight{
+        width:196px;
+        height:500px; /*SET to Auto */
+        float:left;
+        background-color:#fff;
+    }
+    
+    .blueRow {
+        background-color:#f2f6f9;
+    }
+    
+    input#submit, input#form_submit {
+    background-color: #004785;
+    border: medium none;
+    color: #FFFFFF;
+    float: right;
+    padding: 5px 10px;
+    }
+    
+#layoutFooter{
+        height:125px;
+        margin-top:25px;
+        width:1007px;
+        float:left;
+}
+    #footerMenuItems{
+            font-size: 12px;
+            height: 50px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            width: 363px;
+    }
+    
+    #footerMenuItems .menuItemActive a, #footerMenuItems .menuItem a  {
+        color: #8b8c8c;
+        margin-right:23px;
+        margin-left:23px;
+        padding-left:0px;
+    }
+    
+    #footerMenuItems .menuItemActive, #footerMenuItems .menuItem {
+        padding-left:0px;
+    }
+    
+    
+    #footerLogo{
+        height:75px;
+        width:1007px;
+        background-repeat:no-repeat;
+        background-position: center;
+        background-image:url('../img/footerLogo.jpg');
+        float:left;
+    }
+
+div.siteOffersModule_offerCategoryHeader, div#topOffersHeader, div#populairOffersHeader, div#contentMiddle h1 {
+    font-family: Helvetica, Aria, sans-serif;
+    font-size:18px;
+    color:#ffffff;
+    background-color:#004785;
+    padding-left: 10px;
+    padding-top: 3px;
+    float:left;
+}
+    
+#contentRight h1 {
+    color:#C21A2E;
+    margin-top:0px;
+    
+}
+    
+/* START OFFERS Module -> CATEGORY OFFERS */
+
+div.siteOffersModule_offerCategoryContainer {
+    width:196px;
+    float:left;
+}
+div.siteOffersModule_offerCategoryHeader    {
+    margin-bottom:2px;
+    height:26px;
+    width:186px;
+    float:left;
+}
+
+span.siteOffersModule_offerCategoryExtend {
+    color: #8F9190;
+    float: left;
+    font-size: 10px;
+    padding-bottom: 20px;
+    margin-left: 9px;
+    margin-top: 14px;
+}
+    
+div.siteOffersModule_offerCategoryItem   {
+    background-color: #FFFFFF;
+    float: left;
+    height: 13px;
+    margin-bottom: 3px;
+    margin-left: 10px;
+    margin-top: 0;
+    width: 138px;
+    background-image: url("../img/list_image.gif");
+    background-position: 0px 9px;
+    background-repeat:no-repeat;
+    font-size:12px;
+    padding-left:9px;
+}
+
+div.siteOffersModule_offerCategoryItem a {
+    color: #004785;
+    float: left;
+    margin-left: -3px;
+    margin-top: 4px;
+}
+
+/* END OFFERS Module -> CATEGORY OFFERS */
+#topOffersHeader, div#contentMiddle h1    {
+    float: left;
+    height: 26px;
+    width: 505px;
+    font-weight:normal;
+    margin-top:0px;
+}
+
+/* START CONTACT Module */
+#contactFormsModule_errorFields{
+    margin-left:18px;
+    color:#E11B22;
+    display:none;
+}
+/* END CONTACT Module */
+
+/* START OFFERS Module -> TOP OFFERS */
+.siteOffersModule_errors{
+    border: 1px solid #E11B22;
+    color: #E11B22;
+    margin-left: 10px;
+    margin-top: 40px;
+    padding: 8px;
+    width: 473px;
+}
+
+
+div.siteOffersModule_offerBox   {
+    float: left;
+    padding: 12px 14px 4px 12px;
+    width: 489px;
+    
+}
+
+div.siteOffersModule_offerText span {
+    margin-bottom:5px;
+    float:left;
+}
+
+    div.siteOffersModule_offerImage {
+        width:68px;
+        height:63px;
+        border: 1px solid #004785;
+        float:left;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    
+
+    div.siteOffersModule_offerText{
+        height: 68px;
+        float:left;
+        margin-left:14px;
+        display:block;
+    }
+        span.siteOffersModule_offerTitle{
+            color:#004785;
+            font-size:14px;
+            font-weight:bold;
+            margin-left:0px;
+            display:block;
+        }
+        span.siteOffersModule_offerFromPrice{
+            color:#8f9190;
+            font-size:12px;
+            margin-left:0px;
+            display:block;
+        }
+        span.siteOffersModule_offerForPrice{
+            color:#c21a2e;
+            font-size:12px;
+            margin-left:0px;
+            display:block;
+        }
+        span.siteOffersModule_offerForPrice strong {
+            font-size:14px;
+        }
+    div.siteOffersModule_offerExtra{
+        float:right;
+        margin-top: 4px;
+
+    }
+        span.siteOffersModule_offerDiscount{
+
+        }
+        
+        span.siteOffersModule_offerDiscountGrey  {
+            color:#8f9190;
+            font-size:12px;
+        }
+        
+        span.siteOffersModule_offerDiscountRed  {
+            color:#c21a2e;
+            font-size:18px;
+        }
+        
+        
+        div.siteOffersModule_offerButton{
+            background: url("../img/button.png") no-repeat scroll 0 0 transparent;
+            color: #FFFFFF;
+            font-size: 18px;
+            height: 32px;
+            padding-top: 5px;
+            text-align: center;
+            width: 98px;
+            cursor:pointer;
+             margin-top: 6px;
+        }
+/* END OFFERS Module -> TOP OFFERS */
+
+#populairOffersHeader{
+    height: 26px;
+    width: 187px;
+    background-color:blue;
+    float:left;
+}
+
+/* START OFFERS Module -> TOP OFFERS */
+div.siteOffersModule_populairOfferBox{
+    width: 186px;
+    float: left;
+    padding: 7px 0 9px 9px;
+
+}
+div.siteOffersModule_populairOfferBox div, div.siteOffersModule_populairOfferBox span {
+    float:left;
+
+}
+    div.siteOffersModule_populairOfferImage{
+        width:68px;
+        height:63px;
+        border: 1px solid #004785;
+        float:left;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    div.siteOffersModule_populairOfferText{
+        width: 104px;
+        margin-left: 5px;
+    }
+    
+    div.siteOffersModule_populairOfferText span{
+        margin-bottom:5px;
+    }       
+    
+    
+    span.siteOffersModule_populairOfferTitle{
+                    color: #004785;
+                    font-size: 11px;
+                    font-weight: bold;
+                    width: 129px;
+                    margin-bottom: 5px;
+
+        }
+        span.siteOffersModule_populairOfferFromPrice{
+                color: #8F9190;
+
+        }
+        span.siteOffersModule_populairOfferForPrice{
+                color: #C21A2E;
+
+        }
+        span.siteOffersModule_populairOfferOrder{
+                color: #C21A2E;
+                text-transform: uppercase;
+        }
+    
+/* END OFFERS Module -> TOP OFFERS */
+
+/* START OFFERS Module -> Selected Offer */
+#siteOffersModule_offerTextSingle{
+  padding:10px;
+  float:left;
+}
+#siteOffersModule_orderContainer{
+    width:487px;
+    border:2px solid #004785;
+    float:left;
+    margin-bottom:0px;
+
+}
+    #siteOffersModule_orderHeader{
+        background-color: #004785;
+        color: #FFFFFF;
+        font-size: 12px;
+        font-weight: bold;
+        height: 20px;
+        text-align: center;
+        width: 499px;
+    }
+
+    #siteOffersModule_orderFooter{
+        width:391px;
+        background-color:#CCC;
+        color:#004785;
+        padding:4px 50px;
+        text-align: center;
+    }
+    #siteOffersModule_offerTextSingle table{
+        width:473px;
+        height:auto;
+        padding:10px;
+        border:2px solid #004785;
+        padding:0px;
+        margin:0px;
+        border-spacing:0px;
+
+    }
+    .siteOffersModule_orderTable tbody{
+        width:491px;
+        height:auto;
+        text-align: center;
+        border:2px solid #004785;
+        
+    }
+    
+    .siteOffersModule_offerButton {
+        text-align:center;
+        margin-right:auto;
+        margin-left:auto;
+        margin-top:0px;
+        padding-top: 7px;
+        
+    }
+    
+    .siteOffersModule_orderTable td{
+        width:33%;
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+    
+    input.siteOfferModule_inputAmount {
+        width:50px;
+        height:18px;
+        text-align:center;
+    }
+
+/* END OFFERS Module -> Selected Offer */
+
+/* START  Advertisement Module */
+.advertiseBanners_Container{
+    margin-bottom:25px;
+    border:1px solid #000;
+    float:left;
+}
+/* END  Advertisement Module */
+

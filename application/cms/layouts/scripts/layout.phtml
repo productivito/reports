@@ -1,0 +1,13 @@
+<?php include 'header.phtml';?>
+	<div id="Content">
+		<div id="Left">
+        <div id="Menu">
+			<?php echo $this->menuHelper();?>
+        </div>
+		</div>
+		<div id="Right">
+			<h1><?php echo $this->layout()->title; ?></h1>
+			<?php echo $this->layout()->content; ?>
+		</div>
+	</div> 
+<?php include 'footer.phtml';?>

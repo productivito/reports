@@ -1,0 +1,32 @@
+<?php echo $this->content; ?>
+<br class="close"/>
+<br class="close"/>
+<table summary="Latest entries" cellpadding="0" cellspacing="0" class="OrderData" >
+    <thead>
+        <tr>
+            <th>Controller</th>
+            <th>Action</th>
+            <th class="Icon" >&nbsp;</th>
+            <th class="Icon" >&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $nCount = 0; ?>
+        <?php foreach ($this->rows as $row): ?>
+            <?php if ($nCount % 2 == 0): ?>
+                <tr class="White">
+            <?php else: ?>
+                <tr class="Blue">
+            <?php endif; ?>
+                <td ><?php echo $row['page_controller']; ?></td>
+                <td ><?php echo $row['page_action']; ?></td>
+                <td>
+                    <a href="<?php echo $this->baseUrl('pages/edit/id/' . $row['page_ID']); ?>" title="edit">
+                        <img src="<?php echo $this->baseUrl('img/ico/16/pencil_16_hot.png'); ?>" alt="edit" width="16"/>
+                    </a>
+                </td>
+            </tr>
+            <?php $nCount++; ?>
+        <?php endforeach; ?>
+    </tbody>
+</table>

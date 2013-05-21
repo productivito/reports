@@ -1,0 +1,27 @@
+<div class="demo">
+
+<ul id="sortable1" class='droptrue'><span class="title_interests">Offer's interests</span>
+<?php 		foreach ($this->aInterestsbyOffer as $aInterestsbyOffer){ 
+
+	echo '<li id="'.$aInterestsbyOffer['id_interest'].'" class="ui-state-default">'.$aInterestsbyOffer['name'].'</li>';
+		}
+?>
+
+</ul>
+<input type="hidden" id="offer_id" value="<?php echo $this->id?>"/>
+<ul id="sortable2" class='dropfalse'><span class="title_interests">All interests</span>
+
+<?php 		foreach ($this->aInterestsWithOutOffer as $aInterestsWithOutOffer){ 
+
+	echo '<li id="'.$aInterestsWithOutOffer['id'].'" class="ui-state-highlight">'.$aInterestsWithOutOffer['name'].'</li>';
+		}
+?>
+
+
+</ul>
+
+
+
+<br clear="both" />
+
+</div>

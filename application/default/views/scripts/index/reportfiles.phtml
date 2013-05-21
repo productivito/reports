@@ -1,0 +1,334 @@
+<div id="reportTimeSelector">
+    <?php echo $this->partial('index/userreportfilters.phtml', array()); ?>
+</div>
+<div id="report">
+    <div class="loader" id="loader">
+        <img class="loader-image" src="<?php echo $this->baseUrl('img/ajax-loader.gif'); ?>" /><br/>
+        <h3>Se incarca date de la server, va rugam asteptati.</h3>
+    </div>
+    <h2>
+        Raport Fisiere
+        <a href="#" style="float:right">Descrie raport</a>
+    </h2><hr/>
+    <div id="tableTabs" class="tabs" style="margin-bottom:10px;padding-bottom:10px;">
+        <div class="ui-widget-content ui-corner-all ui-tabs ui-tabs-panel" style="width:300px;margin:20px;">
+            Filtru extensii <hr style='border:1px solid #CCC;'/>
+            <input type="radio" name="extFilterGroup" id="extFilterGroup1" class="extFilterGroup" value="1" selected="selected" />
+            <label for="extFilterGroup1">Toate extensiile</label><br/>
+            <input type="radio" name="extFilterGroup" id="extFilterGroup2" class="extFilterGroup" value="2" />
+            <label for="extFilterGroup2">Extensii definite:</label> <input  style = "margin-bottom:7px;" type="text" id="filterExtensions" disabled="disabled" /><br/><span style="margin-left:22px;">* Introduceti extensiile separate prin virgula </span> <br/>
+            <center><input type="button" id="extensionFilterAction" value="Aplica" style="margin:5px auto;" /></center>
+        </div>
+        <input type="hidden" id="resultFilters" />
+        <input type="hidden" id="resultContainer" />
+        <div id="container">
+        	<div id="tableContainer"></div>
+      		<span id="menuButtons" style="float:right;margin-top:-48px;margin-right:33px;"><button id="ajaxCallPaginationPrevious">Previous</button>
+      		<button id="ajaxCallPaginationNext">Next</button></span>
+      	</div>
+    </div>
+    <div class="export" id="exportDocuments">
+        <hr/>
+        <a href="#" onclick="javascript:exportCurrent('csv');">Export Excel CSV</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="#" onclick="javascript:exportCurrent('pdf');">Export PDF</a>
+    </div>
+</div>
+<script type="text/javascript">
+    // Link the local processing action to the filtering pane
+    $(document).ready(function() {
+        
+        var topResponseData = null;
+        
+        $('#tableTabs').hide();
+        $('#ajaxTimedFilterAction').click(ajaxCall);
+        $('#extensionFilterAction').click(ajaxCall);
+        
+        $('.extFilterGroup').click(function() {
+            if($(this).val() == 1) {
+                $("#filterExtensions").val('').attr('disabled', true);
+            } else {
+                $("#filterExtensions").attr('disabled', false);
+            }
+        });
+        
+ 	    $('#ajaxCallPaginationNext').click(ajaxCallPaginationNext);
+        $('#ajaxCallPaginationPrevious').click(ajaxCallPaginationPrevious);       
+    });
+
+    var ajaxCall = function()
+    {
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            if ($('#filterExtensions').val().length) {
+                myFilters.extensions = $('#filterExtensions').val();
+            }
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/files'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors()
+                },
+                beforeSend: function() {
+                    $('#tableContainer').empty();
+                    $('#tableTabs').hide();
+                    $('#loader').show();
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,1,100));
+                $('#tableContainer').css('overflow','scroll');
+                $('#responseDataTable').dataTable();
+                
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 
+		        
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+        }
+    };
+
+	var ajaxCallPaginationNext = function() {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		page = parseInt(page) + 1;
+		
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            if ($('#filterExtensions').val().length) {
+                myFilters.extensions = $('#filterExtensions').val();
+            }        
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/filespage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage: $("#numberElements :selected").text()
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButtons").addClass('hidden');                   
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $('#tableContainer').css('overflow','scroll');	
+                $("#menuButtons").removeClass('hidden');
+                		
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 		
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+	var ajaxCallSetNumberElementsPerPage = function(numberPerPage) {
+	
+		var page = $("#currentPage").text();
+		var n = 10;
+		//var n = $("#numberElements :selected").text();
+		var elementsPerPage = parseInt(page) * parseInt(numberPerPage);
+
+		if(page > 1)
+			$("#ajaxCallPaginationPrevious").removeAttr('disabled');		
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+            if ($('#filterExtensions').val().length) {
+                myFilters.extensions = $('#filterExtensions').val();
+            }        
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/filespage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage : parseInt(numberPerPage)
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                	
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButtons").addClass('hidden');                     
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $('#tableContainer').css('overflow','scroll');
+                $("#menuButtons").removeClass('hidden');
+                					
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    
+	var ajaxCallPaginationPrevious = function() {
+		var page = $("#currentPage").text();
+		var n=10;
+		page = parseInt(page) - 1;
+		if(page == 1)
+			$("#ajaxCallPaginationPrevious").attr('disabled','disabled');
+        var myFilters = getTimesSelectedFilters();
+        if (myFilters !== false) {
+	        if ($('#filterExtensions').val().length) {
+	            myFilters.extensions = $('#filterExtensions').val();
+	        }        
+            myFilters.user = $('#orgSelectedUser').text();
+            myFilters['users'] = parseUserSelectors();	
+            var call = $.ajax({
+                type: 'POST',
+                url: '<?php echo $this->baseUrl('ajax/filespage'); ?>',
+                data: {
+                    filters : myFilters,
+                    users : parseUserSelectors(),
+                    page : page,
+                    type  : 'top',
+                    numberPerPage: $("#numberElements :selected").text()             
+                },
+                beforeSend: function() {
+                    n = $("#numberElements :selected").text();                
+                    $('#tableContainer').empty();
+                    $('#tableContainer').html("<img height='60px' width='60px' style='margin-left:500px' src='" + <?php echo "'".$this->baseUrl()."'"; ?> + "/img/ajax-loader-table.gif'></br><span style='margin-left:485px;font-weight:bold;font-size:17px'>Se incarca</span>");
+                    $("#menuButtons").addClass('hidden');                    
+                },
+                statusCode: {
+                    404: function() { alert("Request-ul nu a putut fi procesat - ACTIUNE INEXISTENTA."); },
+                    500: function() { alert("Request-ul nu a putut fi procesat - EROARE DE RETEA."); }
+                }
+            }).done(function() {
+                var data = eval('(' + call.responseText + ')');
+                $('#tableContainer').html(processDocumentsTable(data,page,n));
+                $('#tableContainer').css('overflow','scroll');
+                $("#menuButtons").removeClass('hidden');
+                					
+		 		$("select").change(function () {
+		          	ajaxCallSetNumberElementsPerPage($(this).attr('value'));   
+		        }); 			
+
+                // Keep data and filters
+                $('#resultFilters').val(data.filters);
+                topResponseData = data;
+                //processDocumentsChart(data, 10);
+               // $('#tableChartDraw').show();
+
+            }).fail(function() {
+                $('#tableContainer').html("<center style=\"margin:20px 0px;\">" + call.responseText + "</center>");
+            }).always(function() {
+                $('#loader').hide();
+                $('#tableTabs').show();
+            });
+          }
+    };
+
+    var processDocumentsTable = function(data,page,elementsPerPage)
+    {
+        var dt = data.data.usage;
+		var select = '<select id="numberElements">'
+		var o1 = '<option>10</option>',
+			o2 = ' <option>50</option>', 
+			o3 = ' <option>100</option>';
+		if(elementsPerPage == 10)
+			o1 = '<option selected="selected">10</option>';
+		if(elementsPerPage == 50)
+			o2 = '<option selected="selected">50</option>';
+		if(elementsPerPage == 100)
+			o3 = '<option selected="selected">100</option>';		
+		select = select + o1 + o2 + o3 + "</select>";	
+        var output = select + '<table id="topTable">';
+        // header
+        output += '<thead><tr>';
+        output += '<th width=\'7%\'  >Calculator</th>';
+        output += '<th width=\'7%\'>User</th>';
+        output += '<th width=\'10%\'>Nume Fisier</th>';
+        output += '<th width=\'10%\'>Operatiune</th>';
+        output += '<th width=\'10%\'>Data / Ora</th>';
+        output += '<th width=\'5%\'>Cale citire</th>';
+        output += '<th width=\' 30%\'>Cale scriere</th>';
+        output += '</tr></thead><tbody>';
+        // data
+        for (i in dt) {
+            output += '<tr>';
+            output += '<td>' + dt[i].computer + '</td>';
+            output += '<td>' + dt[i].user + '</td>';
+            output += '<td>' + dt[i].fileName + '</td>';
+            output += '<td>' + dt[i].operation + '</td>';
+            output += '<td>' + dt[i].tOperation + '</td>';
+            output += '<td>' + dt[i].readPath + '</td>';
+            output += '<td>' + dt[i].writePath + '</td>';
+            output += '</tr>';
+        }
+        output += '</tbody></table></br>Pagina <div id="currentPage">'+ page + '</div>';
+        return output;
+    };
+
+    var exportCurrent = function(type) {
+        if (typeof(type) === 'undefined') {
+            alert("Format de document necunoscut in functia de export");
+            return;
+        }
+        var myFilters = getTimesSelectedFilters();
+        myFilters['users'] = parseUserSelectors();
+        var component = 'usage';
+        var action = 'files';
+        exportReport(action, myFilters, type, component);
+    };
+
+</script>

@@ -1,0 +1,178 @@
+[test]
+Autoloadernamespaces[] = "Zend_"
+Autoloadernamespaces[] = "Custom_"
+
+
+resources.db.params.host = _DBHOST_
+resources.db.params.username = _DBUSERNAME_
+resources.db.params.password = "_DBPASSWORD_"
+resources.db.params.dbname = "_DBNAME_"
+
+db.params.charset = utf8 ;
+resources.db.adapter = "SQLSRV"
+resources.db.isDefaultTableAdapter = true
+resources.db.params.charset = "utf8"
+
+appnamespace = "Application"
+resources.frontController.params.displayExceptions = 0
+
+
+//Include path
+includePaths.library = APPLICATION_PATH "/../library"
+
+//Bootstrap
+bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
+bootstrap.class = "Bootstrap"
+
+//Front Controller
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+resources.frontController.moduleDirectory = APPLICATION_PATH "/modules"
+//resources.frontController.defaultModule = "googleMap"
+resources.modules[] = ""
+resources.layout.pluginClass = "Custom_Controller_Plugin_ModuleBasedLayout"
+
+resources.frontController.env = APPLICATION_ENV
+
+//Layout
+resources.layout.layout = "layout"
+resources.layout.layoutPath = APPLICATION_PATH "/layouts/scripts"
+
+//Views
+resources.view.encoding = "UTF-8"
+resources.view.doctype = "XHTML1_STRICT"
+resources.view.basePath = APPLICATION_PATH "/views/"
+
+
+//Session
+resources.session.cookie_secure = true
+resources.session.use_only_cookies = true
+resources.session.gc_maxlifetime = 3600
+resources.session.remember_me_seconds = 3600
+resources.session.saveHandler.class = "Zend_Session_SaveHandler_DbTable"
+resources.session.saveHandler.options.name = "session"
+resources.session.saveHandler.options.primary = "session_ID"
+resources.session.saveHandler.options.modifiedColumn = "session_modified"
+resources.session.saveHandler.options.dataColumn = "session_data"
+resources.session.saveHandler.options.lifetimeColumn = "session_lifetime"
+
+//language
+app.language.default.code = "nl"
+
+
+//Options for plugin
+googlemap.navigate.street = "leidseplein 18"
+googlemap.navigate.city = "amsterdam"
+googlemap.key = "ABQIAAAA8h1j2qqvwW3r1gZBpqQ57BRr8nIPyFs9T0BpffWwijVs2oVtMxTrVeONsf-Cy_PIthOybwHdlWE-lw"
+
+//Options for soap client
+soapclient.timeout = 3
+soapclient.url.getProducts = "http://www.tc.nl/mptickets/tcxml.php?site_id=IYLVythkucFTXDJxYLCk6t34x85Y867FKSDyfkxyfx&type=1"
+soapclient.url.tcShop = "http://tc-h02.tc.nl/mptickets/services/tcshop1.svc/?wsdl"
+
+
+//Options for plugin
+contactform.setting.first = "TRY IT"
+
+
+app.languages.nl = 'nl.ini'
+app.languages.en = 'en.ini'
+
+
+// Login Module
+login.checkCredentials = "index/login"
+login.login = "index/index"
+login.loggedIn = "index/home"
+login.firstLoggedIn = "index/index"
+login.forgotPassword = "index/forgotpsw"
+login.checkMail = "index/index"
+login.afterLogout = "index/index"
+login.dobCheck = 0
+
+
+[local]
+Autoloadernamespaces[] = "Zend_"
+Autoloadernamespaces[] = "Custom_"
+
+resources.db.params.host = _DBHOST_
+resources.db.params.username = _DBUSERNAME_
+resources.db.params.password = "_DBPASSWORD_"
+resources.db.params.dbname = "_DBNAME_"
+resources.db.isDefaultTableAdapter = true
+resources.db.adapter               = "SQLSRV"
+resources.db.params.charset        = "utf8"
+db.params.charset = utf8 ;
+
+appnamespace = "Application"
+resources.frontController.params.displayExceptions = 1
+
+
+//Include path
+includePaths.library = APPLICATION_PATH "/../library"
+
+//Bootstrap
+bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
+bootstrap.class = "Bootstrap"
+
+//Front Controller
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+resources.frontController.moduleDirectory = APPLICATION_PATH "/modules"
+
+//resources.frontController.defaultModule = "googleMap"
+resources.modules[] = ""
+resources.layout.pluginClass = "Custom_Controller_Plugin_ModuleBasedLayout"
+
+resources.frontController.env = APPLICATION_ENV
+
+//Layout
+resources.layout.layout = "layout"
+resources.layout.layoutPath = APPLICATION_PATH "/layouts/scripts"
+
+//Views
+resources.view.encoding = "UTF-8"
+resources.view.doctype = "XHTML1_STRICT"
+resources.view.basePath = APPLICATION_PATH "/views/"
+
+
+//Session
+resources.session.cookie_secure = true
+resources.session.use_only_cookies = true
+resources.session.gc_maxlifetime = 3600
+resources.session.remember_me_seconds = 3600
+resources.session.saveHandler.class = "Zend_Session_SaveHandler_DbTable"
+resources.session.saveHandler.options.name = "session"
+resources.session.saveHandler.options.primary = "session_ID"
+resources.session.saveHandler.options.modifiedColumn = "session_modified"
+resources.session.saveHandler.options.dataColumn = "session_data"
+resources.session.saveHandler.options.lifetimeColumn = "session_lifetime"
+
+//language
+app.language.default.code = "nl"
+
+//Options for soap client
+soapclient.timeout = 3
+soapclient.url.getProducts = "http://www.tc.nl/mptickets/tcxml.php?site_id=IYLVythkucFTXDJxYLCk6t34x85Y867FKSDyfkxyfx&type=1"
+soapclient.url.tcShop = "http://tc-h02.tc.nl/mptickets/services/tcshop1.svc/?wsdl"
+
+//Options for plugin
+googlemap.navigate.street = "leidseplein 18"
+googlemap.navigate.city = "amsterdam"
+googlemap.key = "ABQIAAAA8h1j2qqvwW3r1gZBpqQ57BTnVGG2AOCFfkXMx4Bt3B3BPp3YPBSBgFCiO1P-TuSfoHXVMBDApACD9g"
+
+
+//Options for plugin
+contactform.setting.first = "TRY IT"
+
+
+app.languages.nl = 'nl.ini'
+app.languages.en = 'en.ini'
+
+
+// Login Module
+login.checkCredentials = "index/login"
+login.login = "index/index"
+login.loggedIn = "index/home"
+login.firstLoggedIn = "index/index"
+login.forgotPassword = "index/forgotpsw"
+login.checkMail = "index/index"
+login.afterLogout = "index/index"
+login.dobCheck = 0

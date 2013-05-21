@@ -1,0 +1,58 @@
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.tabs-left {
+	position: relative;
+	padding-left: 12.5em;
+}
+.tabs-left .ui-tabs-nav {
+	position: absolute;
+	left: 0.25em;
+	top: 0.25em;
+	bottom: 0.25em;
+	width: 12em;
+	padding: 0.2em 0 0.2em 0.2em;
+}
+.tabs-left .ui-tabs-nav li {
+	right: 1px;
+	width: 100%;
+	border-right: none;
+	border-bottom-width: 1px !important;
+	border-radius: 4px 0px 0px 4px;
+	-moz-border-radius: 4px 0px 0px 4px;
+	-webkit-border-radius: 4px 0px 0px 4px;
+	overflow: hidden;
+}
+.tabs-left .ui-tabs-nav li.ui-tabs-selected {
+	border-right: 1px solid transparent;
+}
+.tabs-left .ui-tabs-nav li a {
+	float: right;
+	width: 100%;
+	text-align: right;
+}
+.tabs-left > div {
+	height: 35em;
+        width: 40em;
+}
+
+.loader {
+    display: none;
+    width: 100%;
+    margin: 10px;
+    padding: 40px 0px;
+    text-align: center;
+}
+.loader-image {
+    margin: 0px auto 10px auto;
+}
+.tableContainer {
+    display: none;
+    width: 100%;
+    margin: 10px;
+}

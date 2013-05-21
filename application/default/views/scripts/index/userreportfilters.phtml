@@ -1,0 +1,235 @@
+<form style="display:none;" id="exportDocumentForum" action="#" method="POST" target="_blank">
+    <input type="hidden" name="filters" id="exportDocumentFilters" value="" />
+    <input type="hidden" name="dataset" id="exportDocumentAction" value="" />
+    <input type="hidden" name="doctype" id="exportDocumentType" value="" />
+    <input type="hidden" name="component" id="exportDocumentComponent" value="" />
+</form>
+<script>
+    var exportReport = function(action, filters, type, component) {
+        if (typeof(action) === 'undefined') {
+            alert("Actiune nedefinita in functia de export");
+            return;
+        }
+        if (typeof(filters) === 'undefined') {
+            alert("Filtre nedefinite in functia de export");
+            return;
+        }
+        if (typeof(type) === 'undefined') {
+            alert("Format de document necunoscut in functia de export");
+            return;
+        }
+        switch(type) {
+            case 'pdf':
+            case 'csv':
+                $('#exportDocumentAction').val(action);
+                $('#exportDocumentFilters').val(JSON.stringify(filters));
+                $('#exportDocumentType').val(type);
+                $('#exportDocumentComponent').val(component);
+                $('#exportDocumentForum').attr('action', '<?=$this->baseUrl('export/') ?>' + type);
+                $('#exportDocumentForum').submit();
+                break;
+            default:
+                alert("Format de document necunoscut in functia de export");
+                return;
+                break;
+        }
+    };
+</script>
+
+<div id="reportTime">
+    <h2>Timpul</h2><hr/>
+    <table style="margin:0px auto;padding:0px;" cellpadding="0" cellspacing="10">
+        <tr style="vertical-align:top;">
+            <td style="">
+                <h4>Filtre calendaristice</h4>
+                <div id="tabs" class="tabs-left" style="height:200px;width:375px;">
+                    <input type="hidden" id="reportSelectedOption" value="caltabselector_azi" />
+                    <ul>
+                        <li><a class="caltabselector" id="caltabselector_azi" href="#calendarselector1">Azi</a></li>
+                        <li><a class="caltabselector" id="caltabselector_data" href="#calendarselector2">Data</a></li>
+                        <li><a class="caltabselector" id="caltabselector_interval" href="#calendarselector3">Interval date</a></li>
+                    </ul>
+                    <div id="calendarselector1" style="height:180px;width:350px;">
+                        Raport pentru ziua in curs
+                    </div>
+                    <div id="calendarselector2" style="height:180px;width:350px;">
+                        Data raportului<br/>
+                        <input type="text" name="cs2ds" id="cs2ds" class="datepicker" />
+                    </div>
+                    <div id="calendarselector3" style="height:180px;width:350px;">
+                        <table cellpadding="0" cellspacing="0" style="margin:0px;padding:0px;">
+                            <tr style="vertical-align:top;">
+                                <td style="padding-right:5px;">
+                                    Data de inceput<br/>
+                                    <input type="text" name="cs3dsstart" id="cs3dsstart" class="datepicker" />
+                                </td>
+                                <td style="padding-left:5px;">
+                                    Data finala<br/>
+                                    <input type="text" name="cs3dsend" id="cs3dsend" class="datepicker" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="radio" class="wsradiochecker" id="weekselectorA" name="weekselector" value="workweek" checked="checked" />
+                                    <label for="weekselectorA">Saptamana de lucru (L-V)</label><br/>
+                                    <input type="radio" class="wsradiochecker" id="weekselectorB" name="weekselector" value="allweek" />
+                                    <label for="weekselectorB">Intreaga saptamana (L-D)</label><br/>
+                                    <input type="radio" class="wsradiochecker" id="weekselectorC" name="weekselector" value="endweek" />
+                                    <label for="weekselectorC">Week-end (S-D)</label><br/>
+                                    <input type="radio" class="wsradiochecker" id="weekselectorD" name="weekselector" value="specweek" />
+                                    <label for="weekselectorD">Zile specifice:</label><br/>
+                                    <div style="margin-left:24px;" id="specweekdays">
+                                        <input type="checkbox" id="cs3specdays_L" name="cs3specdays[]" value="l" class="dselckb" />
+                                        <label for="cs3specdays_L">L</label>
+                                        <input type="checkbox" id="cs3specdays_Ma" name="cs3specdays[]" value="ma" class="dselckb" />
+                                        <label for="cs3specdays_Ma">Ma</label>
+                                        <input type="checkbox" id="cs3specdays_Mi" name="cs3specdays[]" value="mi" class="dselckb" />
+                                        <label for="cs3specdays_Mi">Mi</label>
+                                        <input type="checkbox" id="cs3specdays_J" name="cs3specdays[]" value="j" class="dselckb" />
+                                        <label for="cs3specdays_J">J</label>
+                                        <input type="checkbox" id="cs3specdays_V" name="cs3specdays[]" value="v" class="dselckb" />
+                                        <label for="cs3specdays_V">V</label>
+                                        <input type="checkbox" id="cs3specdays_S" name="cs3specdays[]" value="s" class="dselckb" />
+                                        <label for="cs3specdays_S">S</label>
+                                        <input type="checkbox" id="cs3specdays_D" name="cs3specdays[]" value="d" class="dselckb" />
+                                        <label for="cs3specdays_D">D</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>                
+            </td>
+            <td style="">
+                <h4>Filtre orare</h4>
+                <div class="ui-widget-content ui-corner-all ui-tabs ui-tabs-panel" style="height:200px;width:300px;">
+                    <div style="margin:10px;">
+                        <input type="radio" class="hsradiochecker" id="hourselectorC" name="hourselector" value="workallhours" checked="checked" />
+                        <label for="hourselectorC">Program cumulat</label><br/>        
+                        <input type="radio" class="hsradiochecker" id="hourselectorD" name="hourselector" value="workinghours" />
+                        <label for="hourselectorD">Interval orar:</label>
+                        <div style="display:inline;" id="intervalworkinghours">
+                            <input type="text" size="8" id="tsstart" class="timepicker"> -
+                            <input type="text" size="8" id="tsend" class="timepicker">
+                        </div></br>                        
+                        <input type="radio" class="hsradiochecker" id="hourselectorA" name="hourselector" value="workhours" />
+                        <label for="hourselectorA">In timpul programului de lucru ( Nivel Firma )</label><br/>
+                        <input type="radio" class="hsradiochecker" id="hourselectorB" name="hourselector" value="workoutsidehours" />
+                        <label for="hourselectorB">In afara programului de lucru ( Nivel Firma ) </label>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="border-top:1px solid #CECECE;padding-top:10px;text-align:center;">
+                <input type="button" id="ajaxTimedFilterAction" value="Genereaza" />
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    $(function() {
+        $('.datepicker').datepicker({
+        	minDate:new Date(2012,04,01),
+        	maxDate:new Date()   
+        	}
+        );
+        $('.timepicker').timepicker({
+            timeFormat: 'hh:mm:ss',
+            showSecond: true
+        });
+        $('#tabs').tabs();
+        
+        // Tabs selector
+        $('.caltabselector').click(function() {
+            $('#reportSelectedOption').val($(this).attr('id'));
+        });
+        
+        // DaysOfTheWeek selector
+        $('.dselckb').attr('disabled', $('#weekselectorD').is(':checked') ? false : true);
+        $('.wsradiochecker').change(function() {
+            $('.dselckb').attr('disabled', $('#weekselectorD').is(':checked') ? false : true);
+        });
+        
+        // Timepicker selector
+        $('.timepicker').attr('disabled', $('#hourselectorD').is(':checked') ? false : true);
+        $('.hsradiochecker').change(function() {
+            $('.timepicker').attr('disabled', $('#hourselectorD').is(':checked') ? false : true);
+        });
+    });
+    
+    // Validate selections and return the filters
+    var getTimesSelectedFilters = function() {
+        var filters = null;
+        switch ($('#reportSelectedOption').val()) {
+            case 'caltabselector_azi':
+                filters = {
+                    'dateIs' : "<?php echo date('m/d/Y'); ?>",
+                    'timeinterval' : $('input[name=hourselector]:checked').val(),
+                    'hArray' : {},
+                    'users' : []
+                };
+                break;
+            case 'caltabselector_data':
+                if ($('#cs2ds').val() == '') {
+                    alert('Selectati data raportului.');
+                    return false;
+                }
+                filters = {
+                    'dateIs' : $('#cs2ds').val(),
+                    'timeinterval' : $('input[name=hourselector]:checked').val(),
+                    'hArray' : {},
+                    'users' : []
+                };
+                break;
+            case 'caltabselector_interval':
+                if ($('#cs3dsstart').val() == '') {
+                    alert('Selectati o data de inceput.');
+                    return false;
+                }
+                if ($('#cs3dsend').val() == '') {
+                    alert('Selectati o data finala.');
+                    return false;
+                }
+                filters = {
+                    'dateStart' : $('#cs3dsstart').val(),
+                    'dateEnd' : $('#cs3dsend').val(),
+                    'interval' : $('input[name=weekselector]:checked').val(),
+                    'days' : [],
+                    'timeinterval' : $('input[name=hourselector]:checked').val(),
+                    'hArray' : {},
+                    'users' : []
+                };
+                if ($('input[name=weekselector]:checked').val() == 'specweek') {
+                    if ($('input[name="cs3specdays[]"]:checked').length == 0) {
+                        alert('Selectati zelele dorite.');
+                        return false;
+                    }
+                    $('input[name="cs3specdays[]"]:checked').each(function() {
+                        filters.days.push($(this).val());
+                    });
+                }
+                break;
+            default:
+                alert("Actiunea nu poate fi efectuata.\nSelector de data invalid.");
+                break;
+        }
+        if ($('input[name=hourselector]:checked').val() == 'workinghours') {
+            if ($('#tsstart').val() == '') {
+                alert('Selectati inceputul intervalului orar.')
+                return false;
+            }
+            if ($('#tsend').val() == '') {
+                alert('Selectati finalul intervalului orar.')
+                return false;
+            }
+            filters.hArray = {
+                'startTime' : $('#tsstart').val(),
+                'endTime' : $('#tsend').val()
+            };
+        }
+        filters.users = parseUserSelectors();
+        return filters;
+    };
+    
+</script>

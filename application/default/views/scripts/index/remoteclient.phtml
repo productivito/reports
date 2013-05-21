@@ -1,0 +1,97 @@
+<?php
+	list($read,$add,$modify,$delete) = explode(",",$this->rights,10);
+	
+	if($read != "r")
+		header('Location:'.$this->baseUrl('index/index'));
+?>
+<div id="contentLeft">
+
+<h2> Clienti </h2>
+<hr/>
+<!--[if !IE]>start section<![endif]-->	
+<div class="section table_section">
+	<!--[if !IE]>start title wrapper<![endif]-->
+	<div class="title_wrapper">
+		<h2>Lista Clienti</h2>
+	</div>
+	<!--[if !IE]>end title wrapper<![endif]-->
+	<!--[if !IE]>start section content<![endif]-->
+	<div class="section_content">
+		<!--[if !IE]>start section content top<![endif]-->
+		<div class="sct">
+			<form action="#">
+			<fieldset>
+			<!--[if !IE]>start table_wrapper<![endif]-->
+			<div class="table_wrapper">
+				<div class="table_wrapper_inner">
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tbody><tr>
+						<th width="3%">Numar.</th>
+						<th>Nume Calculator</th>
+						<th>IP Client</a></th>
+						<th>Ultima Logare</th>
+						<th>Versiune Client</th>
+						<th>rcEnabled</th>
+						<th>rcTrace</th>
+						<th style="width: 96px;">Actiuni</th>
+					</tr>
+					<?php 
+						$i = 1;
+						foreach($this->clients as $client)   
+						{		
+					?>
+					<tr class="first">
+						<td ><?php echo $i."."; ?></td>
+						<td><?php echo $client['rcName'];?></td>
+						<td><?php echo $client['rcClientIP'];?></td>
+						<td><?php echo $client['rcClientLastSeen']->format('Y-m-d');?></td>
+						<td><?php echo $client['rcClientVersion'];?></td>
+						<td><?php if($client['rcEnabled'] =='0'){echo "Disabled";}
+										else {echo "Enabled";}?></td>
+						<td><?php if($client['rcTrace'] =='0'){echo "Disabled";}
+										else {echo "Enabled";}?></td>
+						<td style="width: 96px;">
+							<div class="actions">
+								<ul>
+									<?php if($modify == "m"){ ?>
+									<li><a class="action2 " id="<?php echo $client['rcID']; ?>"  href="<?php echo $this->baseUrl('index/editremoteclient/id/'.$client['rcID']); ?>">2</a></li>
+									<?php } ?>
+									<?php if($delete == "d"){ ?>
+										 <li><a class="action4 <?php echo $client['rcName'];?>" id="<?php echo $client['rcID']; ?>" onclick="return deleteSelectedClient(this)" href="javascript: void(0);">4</a></li>
+									<?php }?>
+									<!-- <li><input class="radio" id="<?php echo $client['rcID']; ?>" name="" type="checkbox" value="" /></li> -->
+								</ul>
+							</div>
+						</td>
+					</tr>
+					<?php $i++; }?>
+				</tbody></table>
+				</div>
+			</div>
+			<!--[if !IE]>end table_wrapper<![endif]-->
+			
+			<!--[if !IE]>start table menu<![endif]-->
+			<!-- <div class="table_menu">
+				<ul class="right">
+					<li><span onclick="checkAll();" class="button approve"><span><span>Selecteaza Tot</span></span></span></li>
+					<li><span onclick="uncheckAll();" class="button approve"><span><span>Deselecteaza Tot</span></span></span></a></li>
+					<?php if($delete == "d"){ ?>
+					<li><span onclick="deleteSelectedCategories()" class="button approve"><span><span>Sterge Selectate</span></span></span></li>
+					<?php } ?>
+				</ul>
+			</div> -->
+			<!--[if !IE]>end table menu<![endif]-->
+			
+			
+			</fieldset>
+			</form>
+		</div>
+		<!--[if !IE]>end section content top<![endif]-->
+
+		
+	</div>
+	<!--[if !IE]>end section content<![endif]-->
+</div>
+<!--[if !IE]>end section<![endif]-->
+
+</div>

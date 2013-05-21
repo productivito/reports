@@ -1,0 +1,12 @@
+RewriteEngine On
+IndexOptions IgnoreClient
+RewriteCond %{REQUEST_METHOD} ^TRACE
+RewriteRule .* - [F]
+
+RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)	[NC]
+RewriteRule .* - [F]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]

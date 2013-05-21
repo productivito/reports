@@ -1,0 +1,21 @@
+<?php $this->headScript()->appendFile($this->baseUrl('js/default/objects/googleMap.js')); ?>
+<script type="text/javascript">
+    /* Wait till the pge is fully loaded */
+    jQuery(document).ready(function(){
+        googleMap.initialize();
+    })
+</script>
+
+<div class="googleMapModule_container" apikey="<?php echo $this->apiKey; ?>">
+    <div class="googleMapModule_searchContainer" style="float:left;">
+        <span class="route_from"><?php echo $this->languageHelper('route_from'); ?></span>
+        <input type="text" id="route_from" value="" />
+        <div id="navigateMap" onclick="googleMap.route()">
+        </div>
+        <span class="route_to"><?php echo $this->languageHelper('route_to'); ?></span>
+        
+    </div>
+    <div id="googleMapModule_map" style="float:left;" lng="<?php echo $this->startLat; ?>" lat="<?php echo $this->startLng; ?>" radius="<?php echo $this->viewDist; ?>" addr="<?php echo $this->orginAddr; ?>"></div>
+    <div class="googleMapModule_routeDescription"><div class="googleMapModule_routeDescriptionButton"><?php echo $this->languageHelper('route_description'); ?></div></div>
+</div>
+
