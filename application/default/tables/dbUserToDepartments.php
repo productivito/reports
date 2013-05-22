@@ -117,7 +117,7 @@ class Application_Table_dbUserToDepartments extends Zend_Db_Table_Abstract {
    function getFilterdUsers($filtru1,$filtru2,$filtru3)
    {
 	
-	    //mssql_select_db('productivo', $link);
+	    //mssql_select_db('Productivito', $link);
    		$query = $this->select();
    		if(!empty($filtru1) && empty($filtru2) && empty($filtru3))
 		{

@@ -1590,8 +1590,8 @@ class IndexController extends Zend_Controller_Action {
 	//	$result = "";
 		if(!empty($result))
 		{
-			//$ProductivoSession = new Zend_Session_Namespace('ProductivoSession');
-			//$ProductivoSession->user = "myusername";
+			//$ProductivitoSession = new Zend_Session_Namespace('ProductivitoSession');
+			//$ProductivitoSession->user = "myusername";
 			$this->view->user = $result;
 		}
 		else
@@ -2543,10 +2543,10 @@ class IndexController extends Zend_Controller_Action {
 		   else
 		   		$data = $this->formulateRoleAdministration('categories', array(), $data,true);
 				
-		   if(!empty($arrData['productivo_clients']))
-		  		$data = $this->formulateRoleAdministration('productivo_clients', $arrData['productivo_clients'], $data,false);
+		   if(!empty($arrData['Productivito_clients']))
+		  		$data = $this->formulateRoleAdministration('Productivito_clients', $arrData['Productivito_clients'], $data,false);
 		   else
-		   		$data = $this->formulateRoleAdministration('productivo_clients', array(), $data,true);
+		   		$data = $this->formulateRoleAdministration('Productivito_clients', array(), $data,true);
 
 		   if(!empty($arrData['emailaddress']))
 		  		$data = $this->formulateRoleAdministration('emailaddress', $arrData['emailaddress'], $data,false);
@@ -2681,10 +2681,10 @@ class IndexController extends Zend_Controller_Action {
 		   else
 		   		$data = $this->formulateRoleAdministration('emails', array(), $data,true);
 				
-		   if(!empty($arrData['productivo_clients']))
-		  	 	$data = $this->formulateRoleAdministration('productivo_clients', $arrData['productivo_clients'], $data,false);
+		   if(!empty($arrData['Productivito_clients']))
+		  	 	$data = $this->formulateRoleAdministration('Productivito_clients', $arrData['Productivito_clients'], $data,false);
 		   else
-		   		$data = $this->formulateRoleAdministration('productivo_clients', array(), $data,true);
+		   		$data = $this->formulateRoleAdministration('Productivito_clients', array(), $data,true);
 				
 		   if(!empty($arrData['access']))
 		  		 $data['access'] = $arrData['access'];
@@ -3329,7 +3329,7 @@ class IndexController extends Zend_Controller_Action {
 		$description = $db->getMenu($role['access'],"u");
 		$this->view->menu = $description;	
 			
-		$rights = $db->getRights($role['access'],'productivo_clients');
+		$rights = $db->getRights($role['access'],'Productivito_clients');
 		$clients = $db->getEmployeesFromServerRemote();
 		
 		$this->view->rights = $rights;		
@@ -3418,7 +3418,7 @@ class IndexController extends Zend_Controller_Action {
 		foreach($reports as $key=>$value){
 			$pos = 1;
 		
-			if(strpos($key,'reportproductivo') !== false)
+			if(strpos($key,'reportProductivito') !== false)
 			{
 				$temp= $temp.$value."/";
 				$ok = 1;

@@ -84,7 +84,7 @@ class Application_Table_dbDescribeAccess extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		

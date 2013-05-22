@@ -266,7 +266,7 @@ function printDepartment($parent,$departments,$usersToDepartments,$usersMonitori
 							    <div class="checkboxes">
 							    	<?php foreach($this->reports as $report){ ?>
 							    	<?php if ($report['name_access_level'] != 'report_email' && $report['name_access_level'] != 'report_alerts') {?>
-							        <label for="<?php echo	 $report['id']; ?>"><input type="checkbox" id="<?php echo $report['id']; ?>" name="<?php echo 'reportproductivo'.$report['id']; ?>" value="<?php echo $report['id']; ?>"/> <span><?php echo $report['full_name']; ?></span></label>
+							        <label for="<?php echo	 $report['id']; ?>"><input type="checkbox" id="<?php echo $report['id']; ?>" name="<?php echo 'reportProductivito'.$report['id']; ?>" value="<?php echo $report['id']; ?>"/> <span><?php echo $report['full_name']; ?></span></label>
 							        <?php }} ?>
 							   
 								</div>
@@ -370,7 +370,7 @@ function printDepartment($parent,$departments,$usersToDepartments,$usersMonitori
 		
 		<dl class="copy">
 			<dt><strong>Productivito Admin</strong></dt>
-			<dd>&copy; 2013 Productivo  All rights reserved.</dd>
+			<dd>&copy; 2013 Productivito  All rights reserved.</dd>
 		</dl>
 		
 		<dl class="quick_links">

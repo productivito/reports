@@ -16,7 +16,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -57,7 +57,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -112,7 +112,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -153,7 +153,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -194,7 +194,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -217,7 +217,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 	public function deleteSelectedRoles($roles)
 	{
 	    //$link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
-   	   // mssql_select_db('productivo', $link);	
+   	   // mssql_select_db('Productivito', $link);	
 			
 		for($i=0;$i<count($roles);$i++)
 		{
@@ -234,7 +234,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		$where = $this->getAdapter()->quoteInto("id = ?", $role);
 		$this->delete($where);
 	   // $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
-   	    //mssql_select_db('productivo', $link);
+   	    //mssql_select_db('Productivito', $link);
    	     
 		//$sql = " DELETE access_level FROM access_level WHERE id = ".$role;
 		//$query = mssql_query($sql);			
@@ -251,7 +251,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 		
 		  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 		
-		  mssql_select_db('productivo', $link);
+		  mssql_select_db('Productivito', $link);
 		
 		  $query = mssql_query($sql);
 		
@@ -305,7 +305,7 @@ class Application_Table_dbMenu extends Zend_Db_Table_Abstract {
 	
 	  $link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
 	
-	  mssql_select_db('productivo', $link);
+	  mssql_select_db('Productivito', $link);
 	
 	  $query = mssql_query($sql);
 	

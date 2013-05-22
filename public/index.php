@@ -4,7 +4,7 @@ define('APPLICATION_PATH', BASE_PATH . '/application/default');
 define('DS', DIRECTORY_SEPARATOR);
 date_default_timezone_set('Europe/Amsterdam');
 
-$local = array('localhost','localhost:8888','productivo.test','productivo.corporate');
+$local = array('localhost','localhost:8888','Productivito.test','Productivito.corporate');
 $test  = array('webio.ro');
 
 $host = $_SERVER['HTTP_HOST'];

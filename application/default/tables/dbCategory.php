@@ -165,8 +165,8 @@ class Application_Table_dbCategory extends Zend_Db_Table_Abstract {
 
 	    $this->delete($where);
 
-	    /*$link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
-   	    mssql_select_db('productivo', $link);
+	    /*$link = mssql_connect('89.38.209.13', 'Productivito', 'Productivito');
+   	    mssql_select_db('Productivito', $link);
    	     
 		$sql = " DELETE categories FROM categories WHERE id = ".$id;
 		$query = mssql_query($sql);	*/
@@ -179,8 +179,8 @@ class Application_Table_dbCategory extends Zend_Db_Table_Abstract {
  
    function deleteSelectedCategories($categories)
    {
-   	   //$link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
-   	   //mssql_select_db('productivo', $link);
+   	   //$link = mssql_connect('89.38.209.13', 'Productivito', 'Productivito');
+   	   //mssql_select_db('Productivito', $link);
    	   
 		for($i=0;$i<count($categories);$i++)
 		{
@@ -271,9 +271,9 @@ class Application_Table_dbCategory extends Zend_Db_Table_Abstract {
 	 */   
    function getFilterdCategories($selectedCateg, $filtru1, $filtru2, $filtru3,$page,$numberRowsPerPage,$flag = 1)
    {
-   		//$link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
+   		//$link = mssql_connect('89.38.209.13', 'Productivito', 'Productivito');
 	
-	    //mssql_select_db('productivo', $link);
+	    //mssql_select_db('Productivito', $link);
 	    
 	   // print_r(($page-1)*$numberRowsPerPage +$numberRowsPerPage);die();
 	   if($page == 1)
@@ -321,9 +321,9 @@ class Application_Table_dbCategory extends Zend_Db_Table_Abstract {
    
    function getCategoriesNumberFilters($selectedCateg, $filtru1, $filtru2, $filtru3)
    {
-   		//$link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
+   		//$link = mssql_connect('89.38.209.13', 'Productivito', 'Productivito');
 	
-	    //mssql_select_db('productivo', $link);
+	    //mssql_select_db('Productivito', $link);
    		$query = $this->select();
 		$filters = array();
 		

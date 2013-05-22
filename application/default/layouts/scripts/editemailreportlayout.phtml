@@ -116,8 +116,8 @@ function printDepartment($parent,$departments,$usersToDepartments,$usersMonitori
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Productivo Admin Panel</title>
-		<link rel="shortcut icon" href="<?php echo $this->baseUrl('img/productivo_icon_tiny.jpg')?>">
+        <title>Productivito Admin Panel</title>
+		<link rel="shortcut icon" href="<?php echo $this->baseUrl('img/Productivito_icon_tiny.jpg')?>">
         <!-- START Load CSS/JScript -->
         <?php $this->headLink()->prependStylesheet($this->baseUrl('css/admin.css')); ?>
         <?php $this->headLink()->prependStylesheet($this->baseUrl('css/jquery.treeview.css')); ?>
@@ -214,8 +214,8 @@ function printDepartment($parent,$departments,$usersToDepartments,$usersMonitori
 			
 			<!--[if !IE]>start logo and user details<![endif]-->
 			<div id="logo_user_details">
-				<h4 id="logo"><!-- <img src="<?php echo $this->baseUrl('/img/Productivo.png') ?>" width="80px"/></br> -->
-					<b><p>Productivo v2.0 - Monitorizare Corporate</p></b>
+				<h4 id="logo"><!-- <img src="<?php echo $this->baseUrl('/img/Productivito.png') ?>" width="80px"/></br> -->
+					<b><p>Productivito v2.0 - Monitorizare Corporate</p></b>
 					Analiza activitatii si eficientei angajatilor
 				 </h4>
 				
@@ -379,7 +379,7 @@ function printDepartment($parent,$departments,$usersToDepartments,$usersMonitori
 											    <div class="checkboxes">
 											    	<?php foreach($this->reports as $report){ ?>
 											    	<?php if ($report['name_access_level'] != 'report_email' && $report['name_access_level'] != 'report_alerts') {?>
-											        <label for="<?php echo $report['id']; ?>"><input type="checkbox" id="<?php echo $report['id']; ?>" name="<?php echo 'reportproductivo'.$report['id']; ?>" value="<?php echo $report['id']; ?>"  <?php if(in_array($report['id'], $temp_reports)) echo "checked='checked'";?>/> <span><?php echo $report['full_name']; ?></span></label>
+											        <label for="<?php echo $report['id']; ?>"><input type="checkbox" id="<?php echo $report['id']; ?>" name="<?php echo 'reportProductivito'.$report['id']; ?>" value="<?php echo $report['id']; ?>"  <?php if(in_array($report['id'], $temp_reports)) echo "checked='checked'";?>/> <span><?php echo $report['full_name']; ?></span></label>
 											        <?php }} ?>
 											    </div>																					
 											</div>									
@@ -527,8 +527,8 @@ function printDepartment($parent,$departments,$usersToDepartments,$usersMonitori
 		<div id="footer_inner">
 		
 		<dl class="copy">
-			<dt><strong>Productivo Admin</strong></dt>
-			<dd>&copy; 2012 Productivo.ro  All rights reserved.</dd>
+			<dt><strong>Productivito Admin</strong></dt>
+			<dd>&copy; 2012 Productivito.ro  All rights reserved.</dd>
 		</dl>
 		
 		<dl class="quick_links">

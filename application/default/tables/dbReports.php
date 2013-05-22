@@ -827,7 +827,7 @@ class Application_Table_dbReports extends Zend_Db_Table_Abstract
             ->joinLeft(array('rIdle' => "IdleEvent"), "event.reID=rIdle.rieRawEventID");
 
         // Specific filters
-        // $query->where("reType IN (1, 2) OR reID IN (SELECT reID - 1 FROM [ProductivoMonitor].[dbo].[Event] WHERE reType IN (1, 2))");
+        // $query->where("reType IN (1, 2) OR reID IN (SELECT reID - 1 FROM [ProductivitoMonitor].[dbo].[Event] WHERE reType IN (1, 2))");
         
         // User filters
         if (!empty($options['users'])) {

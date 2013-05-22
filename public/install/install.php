@@ -18,7 +18,7 @@
 		
 		fwrite($ourFileHandle,$contents);
 		
-		//file_put_contents("http://localhost/productivo/public/install/application.ini", $contents);
+		//file_put_contents("http://localhost/Productivito/public/install/application.ini", $contents);
 	}
 	
 
@@ -36,8 +36,8 @@
 	</head>
 	
 	<body>
-		<h1 style="text-align:center">Productivo Installer</h1>
-		<form id="installer" action="/productivo/public/install/install.php" method="post">
+		<h1 style="text-align:center">Productivito Installer</h1>
+		<form id="installer" action="/Productivito/public/install/install.php" method="post">
 			<table>
 				<tr>
 					<td>Host :</td>
