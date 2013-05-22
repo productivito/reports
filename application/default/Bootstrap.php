@@ -1,5 +1,14 @@
 <?php
 
+/*+**********************************************************************************
+* The contents of this file are subject to the Productivito Public License Version 1.0
+* ("License"); You may not use this file except in compliance with the License
+* The Original Code is: Productivito Open Source
+* The Initial Developer of the Original Code is Productivito SRL.
+* Portions created by Productivito are Copyright (C) Productivito.
+* All Rights Reserved.
+************************************************************************************/
+
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     #stores a copy of the config object in the Registry for future references
     #!IMPORTANT: Must be runed before any other inits
