@@ -54,8 +54,8 @@ class Application_Table_dbUser extends Zend_Db_Table_Abstract {
 
 		 $this->delete($where);
 		 
-	    /*$link = mssql_connect('89.38.209.13', 'productivo', 'productivo');
-   	    mssql_select_db('productivo', $link);
+	    /*$link = mssql_connect('89.38.209.13', 'productivito', 'productivito');
+   	    mssql_select_db('productivito', $link);
    	     
 		$sql = " DELETE users FROM user WHERE id = ".$id;
 		$query = mssql_query($sql);	*/		 
