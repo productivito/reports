@@ -1,0 +1,86 @@
+FOARTE IMPORTANT
+----------------
+
+Inainte de a porni server-ul, asigurati-va ca nu aveti alte servicii sau aplicatii care sa foloseasca portul 80 (ex. IIS, Skype, etc).
+De obicei Skype in configuratia default vine cu aceasta setare, care se poate dezactiva in 3 pasi simpli:
+  	1. Mergeti in [Tools > Options] > Advanced > Connection
+		2. Daca e bifat, debifati checkbox-ul "Use port 80 and 443 as alternatives for incomming connections"
+		3. Click pe "Save" si reporniti aplicatia
+
+INSTRUCTIUNI
+------------
+
+1. Se dezarhiveaza xampp.zip in C:\ (va apare folder-ul C:\xampp)
+
+2. Se instaleaza SQL Native Client, in functie de sistemul de operare pe care se instaleaza XAMPP:
+	   sqlncli_x86.msi - pentru Windows pe 32 de biti
+	   sqlncli_x64.msi - pentru Windows pe 64 de biti
+
+	ATENTIE: Installer-ele SQL 2012 Native Client sunt compatibile doar cu urmatoarele sisteme de operare:
+		Microsoft Windows Vista; 
+		Microsoft Windows Server 2008; 
+		Microsoft Windows 7
+	Pentru alte versiuni de Windows se instaleaza SQL 2008 R2 Native Client. Acesta este compatibil cu:
+		Microsoft Windows Server 2003 Service Pack 2, or later
+		Microsoft Windows XP Service Pack 2 or later
+		Microsoft Windows Vista
+		Microsoft Windows Server 2008
+		Microsoft Windows 7
+   
+3. Se ruleaza din linie de comanda urmatoarea comanda
+
+       echo 127.0.0.1    productivo.corporate >> "C:\Windows\System32\drivers\etc\hosts"
+	   
+   Alternativ, se poate adauga manual in fisierul "C:\Windows\System32\drivers\etc\hosts" linia
+       
+	   127.0.0.1    productivito.corporate
+	   
+4. Pentru accesarea bazei de date procedam in felul urmator:
+
+	- mergem in folderul xampp/htdocs/productivito/application/default/configs/application.ini
+	- in acest fisier va trebui sa modificam urmatoarele campuri:
+				resources.db.params.host  	- nume host
+				resources.db.params.username	- username baza de date
+				resources.db.params.password	- parola baza de date
+			        resources.db.params.dbname- 	- numele bazei de date ( care va fi in general ProductivitoMonitor )
+				
+			Observatie : Aceste campuri trebuie modificate in 2 locuri ( in cadrul fisierului application.ini ) : 
+					1) dupa   [test]
+						    Autoloadernamespaces[] = "Zend_"
+						    Autoloadernamespaces[] = "Custom_"
+					2) dupa   [local]
+						   Autoloadernamespaces[] = "Zend_"
+						   Autoloadernamespaces[] = "Custom_"
+
+5. Se modifica in c:\xampp\php\php.ini
+
+	La rubrica:
+			;;;;;;;;;;;;;;;;;;;;;;
+			; Dynamic Extensions ;
+			;;;;;;;;;;;;;;;;;;;;;;
+
+	SQL 2008 R2 Cative Client (de regula pe Windows XP)
+
+			;extension=php_sqlsrv_53_ts.dll
+			extension=php_sqlsrv_53_ts_vc9.dll
+
+	SQL 2012 Native Client (de regula pe Windows 7)
+
+			extension=php_sqlsrv_53_ts.dll
+			;extension=php_sqlsrv_53_ts_vc9.dll
+
+
+6. Se porneste XAMPP Control Panel ("C:\xampp\xampp-control.exe")
+       - Click pe butonul "Start" in dreptul serviciului Apache
+       - Daca serviciul porneste, ar trebui sa apara langa buton textul "Running" pe un fundal verde
+	   
+7. Pe server-ul pe care ruleaza MS SQL 2005:
+	Se ruleaza in SQL Management Console script-ul: queryItm.sql (pentru inscrierea valorilor NULL campurile din acest tabel)
+	Se activeaza remote connections (Pentru o documentatie mai detaliata: http://blogs.msdn.com/b/sqlexpress/archive/2005/05/05/415084.aspx)
+	Se adauga urmatoarele exceptii in firewall:
+		- portul pe care comunica MS SQL (de obicei 1433)
+		- aplicatia serverului MS SQL 2005 (C:\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Binn\sqlservr.exe)
+
+8. Se acceseaza din browser adresa http://productivito.corporate
+	Username: admin
+	Password: admin
