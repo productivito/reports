@@ -29,7 +29,7 @@ INSTRUCTIUNI
    
 3. Se ruleaza din linie de comanda urmatoarea comanda
 
-       echo 127.0.0.1    productivo.corporate >> "C:\Windows\System32\drivers\etc\hosts"
+       echo 127.0.0.1    productivito.corporate >> "C:\Windows\System32\drivers\etc\hosts"
 	   
    Alternativ, se poate adauga manual in fisierul "C:\Windows\System32\drivers\etc\hosts" linia
        
