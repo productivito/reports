@@ -1,0 +1,40 @@
+Specificatiile tehnice ale aplicatiei software Productivito
+
+1.  Descrierea programului, serviciilor si functionalitatilor aplicatiei software Productivito
+Aplicatia software Productivito ofera posibilitatea de a extrage in Excel si PDF urmatoarele tipuri de rapoarte referitoare la activitatea calculatoarelor monitorizate:
+
+Rapoarte Monitorizare
+1.	Raport de utilizare a calculatorului
+2.	Monitorizarea Aplicatiilor
+3.	Monitorizarea Documentelor 
+4.	Monitorizare Internet
+5.	Monitorizare Chat
+6.	Monitorizare Fisiere
+
+Rapoarte de prezenta si activitate
+7.	Raport activitate
+8.	Fisa de pontaj si rapoarte departament pentru ITM
+9.	ROI angajati
+10.	Raport alerte
+11.	Top angajati productivi/neproductivi
+12.	Criterii de performanta individuala
+
+plicatia va fi de tip web based. Va putea fi accesata online de catre Useri care au drepturi, prin introducerea userului si parolei.
+rogramarea se realizeaza in PHP iar baza de date va fi SQL.
+Aspectul aplicatiei va fi de tip corporate. Designul va contine predominant elemente achizitionate din librarii grafice profesionale.
+
+2.	Arhitectura sumara a aplicatiei 
+•	Productivito va avea 1 componenta:
+-	Productivito - Interfata Web Based de administrare si raportare – permite vizualizarea informatiilor procesate sub forma de rapoarte prin intermediul interfetei web, care va fi accesata de oriunde cu Username si Parola.
+
+•	Utilizatorii sunt de 2 tipuri: Administrator si Manageri
+•	Administratorul aplicatiei este unic si are drepturi de a defini si modifica variabile legate de: Manageri, Clienti, Departamente, Structura ierarhica, Program de lucru, Operatiuni cu baza de date etc
+•	Managerii sunt predefiniti de Administrator si li se pot aloca unul sau mai multe departamente respectiv unul sau mai multi clienti monitorizati. Au dreptul de a vizualiza si extrage rapoarte in Excel si PDF, aferente nivelului de acces alocat, pot defini aplicatii si site-uri productive/neproductive.
+•	Angajatii monitorizati pot fi organizati in structura ierarhica arborescenta (departamente si subdepartamente), pentru a fi mai usor monitorizati.
+•	Rapoartele se pot vizualiza si extrage la nivel individual, departamental sau global, in functie de specific.
+
+
+3.	Prezentarea detaliata a rapoartelor 
+Aplicatia va avea doua componente principale, una de monitorizare a activitatii angajatilor iar cealalta va urmari prezenta si activitatea angajatilor la birou.
+Rapoartele vor avea reprezentare tabelara si grafica.
+
