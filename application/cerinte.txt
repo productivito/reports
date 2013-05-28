@@ -1,0 +1,145 @@
+Rapoarte Monitorizare
+
+1.  Raport utilizare a calculatorului
+Va raporta perioadele de lucru pe calculator, pauzele de lucru, perioadele in care calculatorul este inchis, scala timpului, lista detaliata cu activitatea cronologica sau top, reprezentare bara cronologica.
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		
+Program de lucru	x		
+Export XLS	x
+Nivel departament	x	
+In afara program de lucru	x		
+Export PDF	x
+Individual	x		
+Program cumulat	x		
+Cronologic  (individual)	x
+Perioada calendaristica	x		
+Zilele saptamanii	x		
+Top	x
+Interval orar	x			
+
+2.	Monitorizarea Aplicatiilor
+Va raporta aplicatiile utilizate, timpii petrecuti in fiecare aplicatie, perioada de start si de inchidere, scala timpului, lista detaliata cu activitatea cronologica.
+La acest raport pot fi setati urmatorii parametri:
+
+Nivel firma	x		
+Program de lucru	x		
+Export XLS	x
+Nivel departament	x		
+In afara program de lucru	x		
+Export PDF	x
+Individual	x		
+Program cumulat	x		
+Cronologic  (individual)	x
+Perioada calendaristica	x		
+Zilele saptamanii	x		Top	x
+Interval orar	x			
+
+3.	Monitorizarea Documentelor  (DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, RTF, ODT, SXW)
+Va raporta documentele utilizate, timpii petrecuti in fiecare document, perioada de start si de inchidere, scala timpului, lista detaliata cu activitatea cronologica sau top.
+La acest raport pot fi setati urmatorii parametri:
+
+Nivel firma	x		
+Program de lucru	x	
+Export XLS	x
+Nivel departament	x		
+In afara program de lucru	x	
+Export PDF	x
+Individual	x	
+Program cumulat	x		
+Cronologic  (individual)	x
+Perioada calendaristica	x		
+Zilele saptamanii	x		Top	x
+Interval orar	x		
+
+4.	Monitorizare Internet
+Va raporta lista detaliata cu activitatea cronologica sau top a site-urilor accesate, timpi start si stop, perioada utilizarii.
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	x
+			Interval orar	x			
+
+5.	Monitorizare Chat
+Va raporta lista detaliata cu activitatea cronologica sau top a activitatilor tip chat in yahoo messenger, timpi start si stop, perioada utilizarii, id-ul cu care se converseaza. Monitorizarea Chat-ului se va face prin monitorizarea programului de Instant Messaging (IM) Yahoo Messenger.
+La acest raport pot fi setati urmatorii parametri:
+
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	x
+			Interval orar	x			
+6.	Monitorizare Fisiere
+Va realiza monitorizare transfer pe/de pe USB, CD, DVD sau alte unitati de stocare. Scopul raportului este de a preveni scurgerile de informatii din companie.
+Se vor monitoriza fisierele si calea lor completa (urmarirea operatiunilor):
+• creare fisier
+• accesare fisier
+• stergere fisier
+• copiere fisier
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar	x			
+
+Rapoarte de prezenta si activitate
+7.	Raport activitate
+Va raporta: Ora deschidere/inchidere PC, timp total petrecut la birou, timp activ, timp inactiv, raport timp activ/timp total, lista detaliata pauze PC.
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar	x			
+8.	Fisa de pontaj si rapoarte departament pentru ITM
+Se salveaza intr-un tabel XML (formatul este definit) sub forma unei foi de prezenta XML, nr de ore petrecute zilnic de fiecare angajat in parte la serviciu.
+Se va raporta numarul de ore lucrate conform contractului de munca, indiferent cat timp a lucrat angajatul.
+Se va raporta durata pauzei de lucru, indiferent de durata acesteia.
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar				
+9.	ROI angajati
+Va calcula costul orelor lucrate efectiv de angajati. Va da posibilitatea sa vedeti comparativ cat platiti angajatii si cat valoreaza munca prestata efectiv. Variabile de introdus: Salariul si numarul de ore.
+Raporteaza: Cost angajat/ora, Nr ore lucrate efectiv, Nr ore nelucrate, Cost ore lucrate.
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar				
+10.	Raport alerte pe email
+Va raporta pe email abaterile calculatoarelor monitorizate de la reguli pe care le puteti predefini, referitor la:
+• timpul de inactivitate
+• procent de inactivitate din intervalul selectat raportat la intervalul orar de lucru
+• raport al accesarii site-urilor productive / neproductive / neclasificate
+• raport de utilizare aplicatii productive / neproductive / neclasificate 
+Posibilitatea de a trimite automat raportul la un interval predefinit la adrese de email predefinite de Administrator.
+La acest raport pot fi setati urmatorii parametri:
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar	x			
+11.	Top angajati productivi/neproductivi
+Va raporteaza topul angajatilor productivi/neproductivi dupa timpii petrecuti in aplicatii si site-uri definite ca fiind productive sau neproductive.
+La acest raport pot fi setati urmatorii parametri:
+
+Nivel firma	x		Program de lucru	x		Export XLS	x
+Nivel departament	x		In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar	x			
+12.	Criterii de performanta individuala
+Acest raport va va ajuta sa evaluati masura in care angajatii isi respecta obiective de performanta individuala care pot fi prevazute in contractul de munca, conform Noului Cod al Muncii 2011.
+Indicatorii se vor referi la: total ore petrecute la birou, total ore productive, total ore neproductive, total ore pauza, ore suplimentare. Posibilitatea de a bifa criteriile de interes pentru a se genera un scoring aferent fiecarui angajat.
+La acest raport pot fi setati urmatorii parametri, suplimentar fata de indicatorii mentionati mai sus:
+Nivel firma			Program de lucru	x		Export XLS	x
+Nivel departament			In afara program de lucru	x		Export PDF	x
+Individual	x		Program cumulat	x		Cronologic  (individual)	x
+Perioada calendaristica	x		Zilele saptamanii	x		Top	
+			Interval orar	x			
+producti
